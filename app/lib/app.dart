@@ -2,7 +2,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'core/providers.dart';
 import 'core/theme.dart';
 import 'features/assistant/assistant_screen.dart';
 import 'features/check_in/check_in_screen.dart';
@@ -42,7 +41,6 @@ class MindBridgeApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(languageProvider);
     return MaterialApp.router(
       title: 'MindBridge',
       debugShowCheckedModeBanner: false,
