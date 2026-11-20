@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -45,6 +46,8 @@ class MindBridgeApp extends ConsumerWidget {
       theme: MindBridgeTheme.light,
       routerConfig: ref.watch(_routerProvider),
       locale: Locale(language == AppLanguage.hausa ? 'ha' : 'en'),
+      supportedLocales: const [Locale('en'), Locale('ha')],
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
     );
   }
 }
