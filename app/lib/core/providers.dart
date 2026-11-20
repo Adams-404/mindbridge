@@ -9,3 +9,11 @@ final isHausaSelectedProvider = Provider<bool>(
 );
 
 final moodSelectionProvider = StateProvider<String?>((ref) => null);
+
+class FollowUpReminder {
+  const FollowUpReminder({required this.title, required this.date});
+  final String title;
+  final DateTime date;
+}
+
+final remindersProvider = StateProvider<List<FollowUpReminder>>((ref) => []);
