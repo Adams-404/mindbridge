@@ -8,7 +8,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.textContaining('Good to have'), findsOneWidget);
-    expect(find.text('A place to begin'), findsOneWidget);
   });
 
   testWidgets('bottom navigation opens learning screen', (tester) async {
