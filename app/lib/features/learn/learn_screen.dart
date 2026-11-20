@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/widgets.dart';
 import '../../core/theme.dart';
 import '../../data/learning_content.dart';
+import '../../data/learning_repository.dart';
 
-class LearnScreen extends StatelessWidget {
+class LearnScreen extends ConsumerWidget {
   const LearnScreen({super.key});
 
   void _openArticle(BuildContext context, LearningArticle article) {
@@ -47,7 +49,8 @@ class LearnScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final articles = ref.watch(learningRepositoryProvider).getArticles();
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 25, 20, 30),
       children: [
@@ -57,7 +60,7 @@ class LearnScreen extends StatelessWidget {
           subtitle: 'Explore introductory information at your own pace. These prototype articles need qualified clinical review before publication.',
         ),
         const SizedBox(height: 27),
-        ...learningArticles.map((article) => Padding(
+        ...articles.map((article) => Padding(
           padding: const EdgeInsets.only(bottom: 11),
           child: Card(
             child: InkWell(
