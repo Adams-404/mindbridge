@@ -20,7 +20,11 @@ void main() {
     expect(find.textContaining('No account is needed'), findsOneWidget);
 
     final continueButton = find.byType(FilledButton).last;
-    await tester.ensureVisible(continueButton);
+    await tester.dragUntilVisible(
+      continueButton,
+      find.byType(Scrollable).first,
+      const Offset(0, -280),
+    );
     await tester.pumpAndSettle();
     await tester.tap(continueButton);
     await tester.pumpAndSettle();
