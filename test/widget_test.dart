@@ -21,6 +21,8 @@ void main() {
     expect(find.text('What MindBridge can and cannot do'), findsOneWidget);
     expect(find.textContaining('No account is needed'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('Continue to MindBridge'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Continue to MindBridge'));
     await tester.pumpAndSettle();
     expect(find.textContaining('Good to have'), findsOneWidget);
