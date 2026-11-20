@@ -42,15 +42,12 @@ class MindBridgeApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final language = ref.watch(languageProvider);
+    ref.watch(languageProvider);
     return MaterialApp.router(
       title: 'MindBridge',
       debugShowCheckedModeBanner: false,
       theme: MindBridgeTheme.light,
       routerConfig: ref.watch(_routerProvider),
-      locale: Locale(language == AppLanguage.hausa ? 'ha' : 'en'),
-      supportedLocales: const [Locale('en'), Locale('ha')],
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
     );
   }
 }
