@@ -4,8 +4,28 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindbridge/app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues({'mindbridge_onboarding_seen': true});
+  });
+
+  testWidgets('first launch explains scope and privacy before entering the app', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('A place to\\nstart with care.'), findsOneWidget);
+    expect(find.text('Privacy, plainly'), findsOneWidget);
+    expect(find.text('What MindBridge can and cannot do'), findsOneWidget);
+    expect(find.textContaining('No account is needed'), findsOneWidget);
+
+    await tester.tap(find.text('Continue to MindBridge'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Good to have'), findsOneWidget);
+  });
+
   testWidgets('app opens on the home screen', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
     await tester.pumpAndSettle();
@@ -70,7 +90,7 @@ void main() {
 
     await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Check-in').last);
+    await tester.tap(find.text('Check in, if you like'));
     await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('Skip this check-in'));
@@ -97,7 +117,10 @@ void main() {
       const Offset(0, -280),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Keep a follow-up in sight'));
+    await tester.tap(find.ancestor(
+      of: find.text('Keep a follow-up in sight'),
+      matching: find.byType(InkWell),
+    ).first);
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextField), 'Call the clinic');
