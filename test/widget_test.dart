@@ -1,5 +1,3 @@
-import 'dart:ui' show AccessibilityFeatures;
-
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -197,7 +195,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     tester.platformDispatcher.accessibilityFeaturesTestValue =
-        const AccessibilityFeatures(disableAnimations: true);
+        const FakeAccessibilityFeatures(disableAnimations: true);
     addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
 
     await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
