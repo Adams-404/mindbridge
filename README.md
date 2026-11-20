@@ -2,36 +2,58 @@
 
 **Bridging the gap between mental health information and professional support.**
 
-MindBridge AI is a mobile-first, bilingual mental health information and referral platform being designed for underserved communities in Nigeria, with an initial focus on English- and Hausa-speaking users.
+MindBridge AI is a mobile-first mental-health information and referral platform being designed for underserved communities in Nigeria, with English and Hausa as intended first-class languages.
 
-> **Project status:** Concept and frontend prototype. This repository does not represent a clinically validated service, a live referral network, or a diagnostic/treatment product.
+> **Status:** Concept-stage product with an active frontend prototype. This repository is not a clinically validated service, live referral network, or diagnostic/treatment product.
 
-## Repository layout
+## Repository
 
-- `web/` — public product landing page.
-- `app/` — Flutter mobile application.
-- `docs/` — product research, technical decisions, safety notes, and delivery plan.
+- `web/` — responsive public landing page.
+- `app/` — Flutter mobile frontend.
+- `docs/` — research, product requirements, UX direction, architecture, safety, and roadmap.
+
+## Start here
+
+- [Product brief](docs/product-brief.md)
+- [Research and references](docs/research.md)
+- [UX and visual direction](docs/ux-and-design.md)
+- [Safety and privacy baseline](docs/safety-and-privacy.md)
+- [Technical architecture](docs/architecture.md)
+- [Roadmap](docs/roadmap.md)
+- [GitHub Issues](https://github.com/Adams-404/mindbridge/issues)
+
+## Preview the landing page
+
+```bash
+cd web
+python3 -m http.server 4173
+```
+
+Then open http://localhost:4173.
+
+## Run the Flutter app
+
+Requires Flutter and Android tooling. Generate the Android runner files on first setup:
+
+```bash
+cd app
+flutter create --platforms=android .
+flutter pub get
+flutter run
+```
+
+See [app/README.md](app/README.md) for checks and current prototype journeys.
 
 ## Product principles
 
 - Clear, compassionate, non-judgmental language.
-- English and Hausa as first-class experiences.
+- English/Hausa localisation, with translations reviewed before release.
 - Low-bandwidth and offline-aware design.
 - Privacy by default and data minimisation.
-- Educational support, never diagnosis or prescribing.
-- Clear routes to qualified human support and urgent help.
-- Architecture that allows local prototype data to be replaced by backend services later.
-
-## Current scope
-
-The first milestone is a polished, responsive landing page. The mobile frontend follows immediately, using local/demo repositories behind interfaces so backend integration does not require rewriting screens.
+- Education and navigation, never diagnosis or prescribing.
+- Verified human support, never fabricated directory entries.
+- Local demo repositories behind interfaces so a backend can be added later.
 
 ## Safety notice
 
-MindBridge AI is not an emergency service and does not replace professional care. Prototype content and flows must be reviewed by qualified mental-health professionals and people with relevant lived experience before any real-world deployment. Do not use demo provider listings as real referrals.
-
-## Development
-
-See [docs/](docs/) for research, product requirements, architecture, safety boundaries, and the issue-driven roadmap.
-
-The Flutter app will require the Flutter SDK. The landing page is a static site in `web/` and can be previewed with any local static server.
+MindBridge is not an emergency service and does not replace professional care. Health content, referral pathways, translations, and future AI behaviour require review by qualified professionals and intended users before real-world deployment. Do not treat prototype content as clinical guidance.
