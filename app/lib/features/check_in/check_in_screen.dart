@@ -65,7 +65,7 @@ class CheckInScreen extends ConsumerWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const Icon(Icons.spa_outlined, size: 30, color: MindBridgeTheme.forest),
               const SizedBox(height: 17),
-              Text(selected == 'Skipped' ? 'That's completely okay.' : 'Thank you for pausing.', style: Theme.of(context).textTheme.titleLarge),
+              Text(selected == 'Skipped' ? 'That’s completely okay.' : 'Thank you for pausing.', style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 8),
               Text(selected == 'Skipped'
                   ? 'You do not have to check in to use MindBridge.'
