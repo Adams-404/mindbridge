@@ -29,7 +29,7 @@ class MindBridgeTheme {
         centerTitle: false,
         titleTextStyle: TextStyle(color: ink, fontSize: 20, fontWeight: FontWeight.w700),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: paper,
         elevation: 0,
         shape: RoundedRectangleBorder(
