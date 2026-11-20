@@ -82,7 +82,7 @@ class CheckInScreen extends ConsumerWidget {
         const SizedBox(height: 20),
         const SafetyNote(compact: true),
         const SizedBox(height: 10),
-        const Text('Your choice stays on this screen only in this prototype. It is not saved or sent anywhere.', style: TextStyle(fontSize: 10, color: MindBridgeTheme.muted, height: 1.5)),
+        const Text('Your choice is kept in memory while the app is open. It is not written to storage or sent anywhere.', style: TextStyle(fontSize: 10, color: MindBridgeTheme.muted, height: 1.5)),
       ],
     );
   }
