@@ -79,13 +79,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               body: 'The current interface is in English. Hausa translation is being prepared and will be labelled clearly when it has been reviewed.',
             ),
             const SizedBox(height: 12),
-            _WelcomeSection(
+            const _WelcomeSection(
               icon: Icons.lock_outline_rounded,
               title: 'Privacy, plainly',
               body: 'No account is needed. This prototype keeps check-ins and reminders in app memory only. They are not sent to a server or saved as personal records. One local preference remembers that you have seen this introduction.',
             ),
             const SizedBox(height: 12),
-            _WelcomeSection(
+            const _WelcomeSection(
               icon: Icons.health_and_safety_outlined,
               title: 'What MindBridge can and cannot do',
               body: 'MindBridge offers general mental health information and self-guided activities. It does not diagnose, provide therapy, replace a qualified professional, or provide emergency or crisis support.',
