@@ -5,10 +5,12 @@ import 'package:go_router/go_router.dart';
 
 import 'core/providers.dart';
 import 'core/theme.dart';
+import 'features/assistant/assistant_screen.dart';
 import 'features/check_in/check_in_screen.dart';
 import 'features/home/home_screen.dart';
 import 'features/learn/learn_screen.dart';
 import 'features/reset/reset_screen.dart';
+import 'features/reminders/reminder_screen.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/support/support_screen.dart';
 
@@ -28,6 +30,8 @@ final _routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/reset', builder: (context, state) => const ResetScreen()),
           GoRoute(path: '/support', builder: (context, state) => const SupportScreen()),
           GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
+          GoRoute(path: '/reminders', builder: (context, state) => const ReminderScreen()),
+          GoRoute(path: '/assistant', builder: (context, state) => const AssistantScreen()),
         ],
       ),
     ],
