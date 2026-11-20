@@ -73,7 +73,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 30),
-            _WelcomeSection(
+            const _WelcomeSection(
               icon: Icons.translate_rounded,
               title: 'Language',
               body: 'The current interface is in English. Hausa translation is being prepared and will be labelled clearly when it has been reviewed.',
