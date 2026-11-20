@@ -38,3 +38,10 @@ Applied structure: benefit-led headline, one-sentence value proposition, clear a
 
 ## Research still required
 Nigerian Data Protection Act 2023 review with qualified counsel/DPO; mapping verified support services and emergency pathways in Gombe/target states; interviews with users, Hausa speakers, clinicians and lived-experience contributors; clinical review of health content; testing on low-end Android, slow connections, screen readers and large text; age/safeguarding review.
+
+
+## 6. Flutter 3.50 Material UI migration
+**Flutter team — Migrate to standalone material_ui and cupertino_ui packages**  
+https://docs.flutter.dev/release/breaking-changes/material-ui-and-cupertino-ui
+
+Flutter 3.50 formally deprecates the in-framework Material library. The app therefore uses the standalone `material_ui` package, and its localization delegates, rather than relying on the legacy `package:flutter/material.dart` import. This keeps the frontend aligned with the current stable Flutter toolchain.
