@@ -4,11 +4,19 @@ on:
   push:
     branches: [main]
     paths:
-      - "app/**"
+      - "lib/**"
+      - "test/**"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - "analysis_options.yaml"
       - ".github/workflows/flutter.yml"
   pull_request:
     paths:
-      - "app/**"
+      - "lib/**"
+      - "test/**"
+      - "pubspec.yaml"
+      - "pubspec.lock"
+      - "analysis_options.yaml"
       - ".github/workflows/flutter.yml"
   workflow_dispatch:
 
@@ -18,9 +26,6 @@ permissions:
 jobs:
   analyze-and-test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app
     steps:
       - name: Checkout
         uses: actions/checkout@v4
