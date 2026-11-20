@@ -108,4 +108,56 @@ void main() {
 
     expect(find.text('Call the clinic'), findsNothing);
   });
+
+  testWidgets('reset screen offers breathing, grounding and body pause exercises', (tester) async {
+    tester.view.physicalSize = const Size(1080, 1920);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Take a breathing pause'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Take a breathing pause'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Choose an exercise'), findsOneWidget);
+    await tester.tap(find.text('Grounding'));
+    await tester.pumpAndSettle();
+    expect(find.text('things you can see'), findsOneWidget);
+    expect(find.text('things you can hear'), findsOneWidget);
+
+    await tester.tap(find.text('Body pause'));
+    await tester.pumpAndSettle();
+    expect(find.text('A moment to notice your body'), findsOneWidget);
+  });
+
+  testWidgets('breathing exercise can be paused, resumed and stopped', (tester) async {
+    tester.view.physicalSize = const Size(1080, 1920);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Take a breathing pause'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Take a breathing pause'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Begin gently'));
+    await tester.pump();
+    expect(find.text('Pause'), findsOneWidget);
+    await tester.tap(find.text('Pause'));
+    await tester.pump();
+    expect(find.text('Resume'), findsOneWidget);
+    await tester.tap(find.text('Resume'));
+    await tester.pump();
+    expect(find.text('Stop exercise'), findsOneWidget);
+    await tester.tap(find.text('Stop exercise'));
+    await tester.pumpAndSettle();
+    expect(find.text('Begin gently'), findsOneWidget);
+  });
+
 }
