@@ -6,6 +6,16 @@ Frontend prototype for MindBridge AI. No backend, account system, analytics, or 
 - Flutter SDK compatible with Dart 3.4+
 - Android Studio / Android SDK or a connected Android device
 
+## Generate Android platform scaffolding (first setup)
+The repository contains the Flutter application source and package configuration. Generate the Android runner project once with:
+
+```bash
+cd app
+flutter create --platforms=android .
+```
+
+This adds native Android Gradle/runner files without replacing the existing Dart source.
+
 ## Run
 ```bash
 cd app
