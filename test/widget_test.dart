@@ -164,4 +164,26 @@ void main() {
     expect(find.text('Begin gently'), findsOneWidget);
   });
 
+  testWidgets('breathing exercise respects the system reduced-motion setting', (tester) async {
+    tester.view.physicalSize = const Size(1080, 1920);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const AccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+
+    await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Take a breathing pause'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Take a breathing pause'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Reduced motion is on'), findsOneWidget);
+    await tester.tap(find.text('Begin gently'));
+    await tester.pump();
+    expect(find.text('Pause'), findsOneWidget);
+    expect(find.text('Stop exercise'), findsOneWidget);
+  });
 }
