@@ -45,3 +45,6 @@ Nigerian Data Protection Act 2023 review with qualified counsel/DPO; mapping ver
 https://docs.flutter.dev/release/breaking-changes/material-ui-and-cupertino-ui
 
 Flutter 3.50 formally deprecates the in-framework Material library. The app therefore uses the standalone `material_ui` package, and its localization delegates, rather than relying on the legacy `package:flutter/material.dart` import. This keeps the frontend aligned with the current stable Flutter toolchain.
+
+
+**Hausa localisation caveat:** the current `material_ui` built-in Material localisation language set does not include Hausa. The prototype therefore keeps Material widget localisation in English until a reviewed Hausa delegate is implemented. Do not set the app's Material locale to `ha` without providing the required Material/Widgets localisation delegates. See the [supported-language list](https://pub.dev/documentation/material_ui/latest/material_ui/kMaterialSupportedLanguages.html).
