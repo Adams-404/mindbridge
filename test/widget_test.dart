@@ -59,4 +59,42 @@ void main() {
     expect(find.text('Not assigned'), findsOneWidget);
     expect(find.text('0.1.0'), findsOneWidget);
   });
+
+  testWidgets('check-in can be skipped without creating a score', (tester) async {
+    await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Check-in').last);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Skip this check-in'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('That’s completely okay.'), findsOneWidget);
+    expect(find.textContaining('not a diagnosis'), findsNothing);
+    expect(find.textContaining('not written to storage'), findsOneWidget);
+  });
+
+  testWidgets('follow-up reminders can be added and deleted in-session', (tester) async {
+    tester.view.physicalSize = const Size(1080, 1920);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Keep a follow-up in sight'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), 'Call the clinic');
+    await tester.tap(find.text('Add reminder'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Call the clinic'), findsOneWidget);
+    expect(find.textContaining('held in memory only'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Delete reminder'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Call the clinic'), findsNothing);
+  });
 }
