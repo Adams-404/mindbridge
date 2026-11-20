@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class MindBridgeTheme {
   static const milk = Color(0xFFF4F0E7);
