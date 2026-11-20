@@ -68,7 +68,7 @@ void main() {
 
     await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Check in, if you like'));
+    await tester.tap(find.text('Check-in').last);
     await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('Skip this check-in'));
@@ -89,12 +89,13 @@ void main() {
 
     await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('Keep a follow-up in sight'));
+    await tester.dragUntilVisible(
+      find.text('Keep a follow-up in sight'),
+      find.byType(Scrollable).first,
+      const Offset(0, -280),
+    );
     await tester.pumpAndSettle();
-    await tester.tap(find.ancestor(
-      of: find.text('Keep a follow-up in sight'),
-      matching: find.byType(InkWell),
-    ).first);
+    await tester.tap(find.text('Keep a follow-up in sight'));
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextField), 'Call the clinic');
