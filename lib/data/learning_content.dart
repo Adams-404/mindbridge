@@ -5,6 +5,10 @@ class LearningArticle {
     required this.title,
     required this.summary,
     required this.sections,
+    this.source,
+    this.reviewer,
+    this.reviewDate,
+    this.contentVersion = '0.1.0',
     this.reviewStatus = 'Prototype copy · clinical review required',
   });
 
@@ -13,6 +17,10 @@ class LearningArticle {
   final String title;
   final String summary;
   final List<String> sections;
+  final String? source;
+  final String? reviewer;
+  final DateTime? reviewDate;
+  final String contentVersion;
   final String reviewStatus;
 }
 
