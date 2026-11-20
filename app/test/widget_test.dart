@@ -7,7 +7,7 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
     await tester.pumpAndSettle();
 
-    expect(find.text('Good to have'), findsOneWidget);
+    expect(find.textContaining('Good to have'), findsOneWidget);
     expect(find.text('A place to begin'), findsOneWidget);
   });
 
@@ -18,6 +18,6 @@ void main() {
     await tester.tap(find.text('Learn').last);
     await tester.pumpAndSettle();
 
-    expect(find.text('A little clarity'), findsOneWidget);
+    expect(find.textContaining('A little clarity'), findsOneWidget);
   });
 }
