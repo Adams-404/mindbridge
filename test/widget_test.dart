@@ -61,11 +61,18 @@ void main() {
   });
 
   testWidgets('check-in can be skipped without creating a score', (tester) async {
+    tester.view.physicalSize = const Size(1080, 1920);
+    tester.view.devicePixelRatio = 2;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Check-in').last);
     await tester.pumpAndSettle();
 
+    await tester.ensureVisible(find.text('Skip this check-in'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Skip this check-in'));
     await tester.pumpAndSettle();
 
@@ -82,10 +89,14 @@ void main() {
 
     await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Keep a follow-up in sight'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Keep a follow-up in sight'));
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextField), 'Call the clinic');
+    await tester.ensureVisible(find.text('Add reminder'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Add reminder'));
     await tester.pumpAndSettle();
 
