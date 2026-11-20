@@ -22,7 +22,7 @@ class SettingsScreen extends ConsumerWidget {
         const SizedBox(height: 27),
         Text('Language', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 5),
-        Text('Choose the language you would like to use.', style: Theme.of(context).textTheme.bodyMedium),
+        Text('Choose a language. Your selection lasts only while the app is open in this prototype.', style: Theme.of(context).textTheme.bodyMedium),
         const SizedBox(height: 12),
         RadioListTile<AppLanguage>(
           value: AppLanguage.english,
