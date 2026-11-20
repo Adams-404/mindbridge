@@ -16,7 +16,7 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: MindBridgeApp()));
     await tester.pumpAndSettle();
 
-    expect(find.text('A place to\\nstart with care.'), findsOneWidget);
+    expect(find.text('A place to\nstart with care.'), findsOneWidget);
     expect(find.text('Privacy, plainly'), findsOneWidget);
     expect(find.text('What MindBridge can and cannot do'), findsOneWidget);
     expect(find.textContaining('No account is needed'), findsOneWidget);
