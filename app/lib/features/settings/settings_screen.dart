@@ -24,22 +24,30 @@ class SettingsScreen extends ConsumerWidget {
         const SizedBox(height: 5),
         Text('Choose a language. Your selection lasts only while the app is open in this prototype.', style: Theme.of(context).textTheme.bodyMedium),
         const SizedBox(height: 12),
-        RadioListTile<AppLanguage>(
-          value: AppLanguage.english,
+        RadioGroup<AppLanguage>(
           groupValue: language,
-          onChanged: (value) => ref.read(languageProvider.notifier).state = value!,
-          title: const Text('English'),
-          contentPadding: EdgeInsets.zero,
-          activeColor: MindBridgeTheme.forest,
-        ),
-        RadioListTile<AppLanguage>(
-          value: AppLanguage.hausa,
-          groupValue: language,
-          onChanged: (value) => ref.read(languageProvider.notifier).state = value!,
-          title: const Text('Hausa'),
-          subtitle: const Text('Translation review in progress'),
-          contentPadding: EdgeInsets.zero,
-          activeColor: MindBridgeTheme.forest,
+          onChanged: (value) {
+            if (value != null) {
+              ref.read(languageProvider.notifier).state = value;
+            }
+          },
+          child: const Column(
+            children: [
+              RadioListTile<AppLanguage>(
+                value: AppLanguage.english,
+                title: Text('English'),
+                contentPadding: EdgeInsets.zero,
+                activeColor: MindBridgeTheme.forest,
+              ),
+              RadioListTile<AppLanguage>(
+                value: AppLanguage.hausa,
+                title: Text('Hausa'),
+                subtitle: Text('Translation review in progress'),
+                contentPadding: EdgeInsets.zero,
+                activeColor: MindBridgeTheme.forest,
+              ),
+            ],
+          ),
         ),
         if (language == AppLanguage.hausa)
           Container(
