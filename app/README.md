@@ -34,6 +34,6 @@ flutter test
 The app uses Flutter's UI/data separation with feature screens, Riverpod for dependency injection/state, and go_router for navigation. Bundled content is prototype copy and needs qualified clinical review. The support directory intentionally has no provider records until a verification process exists.
 
 ## Current journeys
-Home, Learn (bundled introductory articles), optional non-diagnostic check-in (not persisted), breathing pause (start/stop), Support guidance (no fabricated listings), and Settings (English/Hausa selection foundation).
+Home, Learn (bundled introductory articles), optional non-diagnostic check-in (not persisted), breathing pause (start/stop), session-only follow-up reminders (no notifications), Support guidance (no fabricated listings), an inactive assistant concept screen, and Settings (English/Hausa selection foundation).
 
 Hausa selection is a localisation placeholder; full translation and clinical terminology review are not complete.
