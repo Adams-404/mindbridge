@@ -54,7 +54,7 @@ class SettingsScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(color: const Color(0xFFF0E3D9), borderRadius: BorderRadius.circular(8)),
             child: const Text(
-              'Hausa content is being reviewed with language and mental-health contributors. Some prototype interface text may still appear in English.',
+              'The app remains in English for now. Hausa interface copy is not ready until language and mental-health contributors complete their review.',
               style: TextStyle(fontSize: 11, height: 1.5),
             ),
           ),
