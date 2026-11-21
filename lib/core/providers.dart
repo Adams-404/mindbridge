@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../data/ai_repository.dart';
 import '../data/reminders_repository.dart';
 import '../data/settings_repository.dart';
 
+export '../data/ai_repository.dart' show AiRepository, ChatMessage, aiRepositoryProvider;
 export '../data/reminders_repository.dart' show FollowUpReminder, remindersRepositoryProvider;
 export '../data/settings_repository.dart' show SettingsRepository, settingsRepositoryProvider;
 export '../data/support_repository.dart' show SupportRepository, supportRepositoryProvider;
@@ -81,4 +83,71 @@ class RemindersNotifier extends StateNotifier<List<FollowUpReminder>> {
 final remindersProvider = StateNotifierProvider<RemindersNotifier, List<FollowUpReminder>>((ref) {
   final repository = ref.watch(remindersRepositoryProvider);
   return RemindersNotifier(repository);
+});
+
+class ChatState {
+  const ChatState({
+    this.messages = const [],
+    this.isLoading = false,
+    this.errorMessage,
+  });
+
+  final List<ChatMessage> messages;
+  final bool isLoading;
+  final String? errorMessage;
+
+  ChatState copyWith({
+    List<ChatMessage>? messages,
+    bool? isLoading,
+    String? errorMessage,
+  }) {
+    return ChatState(
+      messages: messages ?? this.messages,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage,
+    );
+  }
+}
+
+class ChatNotifier extends StateNotifier<ChatState> {
+  ChatNotifier(this._aiRepository) : super(const ChatState());
+
+  final AiRepository _aiRepository;
+
+  Future<void> sendUserMessage(String content) async {
+    final trimmed = content.trim();
+    if (trimmed.isEmpty || state.isLoading) return;
+
+    final userMessage = ChatMessage.user(trimmed);
+    final updatedMessages = [...state.messages, userMessage];
+
+    state = state.copyWith(
+      messages: updatedMessages,
+      isLoading: true,
+      errorMessage: null,
+    );
+
+    try {
+      final responseText = await _aiRepository.sendMessage(updatedMessages);
+      final assistantMessage = ChatMessage.assistant(responseText);
+      state = state.copyWith(
+        messages: [...updatedMessages, assistantMessage],
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: e.toString().replaceFirst('Exception: ', ''),
+      );
+    }
+  }
+
+  void clearConversation() {
+    state = const ChatState();
+  }
+}
+
+final chatProvider = StateNotifierProvider<ChatNotifier, ChatState>((ref) {
+  final aiRepo = ref.watch(aiRepositoryProvider);
+  return ChatNotifier(aiRepo);
 });

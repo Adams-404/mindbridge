@@ -1,7 +1,7 @@
 name: mindbridge
 description: A bilingual mental health information and support navigation prototype.
 publish_to: "none"
-version: 0.1.0+1
+version: 0.2.0+2
 environment:
   sdk: ">=3.5.0 <4.0.0"
 dependencies:
@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   flutter_riverpod: ^2.6.1
   go_router: ^14.8.1
+  http: ^1.2.2
   shared_preferences: ^2.5.3
 dev_dependencies:
   flutter_test:
