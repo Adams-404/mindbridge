@@ -118,14 +118,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 26),
               const SafetyNote(compact: true),
-              const SizedBox(height: 16),
-              Center(
-                child: Text(
-                  'A prototype built with care · 0.1.0',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: MindBridgeTheme.muted, fontSize: 11),
-                ),
-              ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
             ]),
           ),
         ),
