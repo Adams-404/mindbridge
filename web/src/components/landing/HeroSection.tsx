@@ -38,12 +38,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <p className="hero-lede">{t.heroLede}</p>
 
         <div className="hero-actions">
-          <button
-            type="button"
+          <a
             className="button button-dark"
-            onClick={() => onOpenPrototype('home')}
+            href="#download"
           >
             <span>{t.heroCtaPrimary}</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+          <button
+            type="button"
+            className="button button-outline"
+            onClick={() => onOpenPrototype('home')}
+          >
+            <span>{t.openWebPrototype}</span>
             <span aria-hidden="true">↗</span>
           </button>
           <a className="text-link" href="#inside">

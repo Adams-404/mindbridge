@@ -10,7 +10,7 @@ export const StepsSection: React.FC<StepsSectionProps> = ({ language }) => {
   const t = translations[language];
 
   return (
-    <section className="steps-section" aria-labelledby="steps-heading">
+    <section className="steps-section" id="steps" aria-labelledby="steps-heading">
       <div className="wrap">
         <div className="section-heading">
           <div>

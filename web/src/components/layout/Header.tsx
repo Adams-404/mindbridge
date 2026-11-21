@@ -104,6 +104,9 @@ export const Header: React.FC<HeaderProps> = ({
                 <a href="#faq" onClick={handleNavLinkClick}>
                   {t.navFaq}
                 </a>
+                <a href="#download" onClick={handleNavLinkClick}>
+                  {t.navExplore}
+                </a>
               </>
             ) : null}
 

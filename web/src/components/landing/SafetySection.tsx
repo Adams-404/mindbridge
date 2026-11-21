@@ -10,7 +10,7 @@ export const SafetySection: React.FC<SafetySectionProps> = ({ language }) => {
   const t = translations[language];
 
   return (
-    <section className="safety-section wrap" aria-labelledby="safety-heading">
+    <section className="safety-section wrap" id="safety" aria-labelledby="safety-heading">
       <div className="safety-mark" aria-hidden="true">✳</div>
       <div className="safety-content">
         <p className="section-index">{t.safetyEyebrow}</p>
