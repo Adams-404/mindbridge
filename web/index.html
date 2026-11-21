@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <base href="$FLUTTER_BASE_HREF">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f0e7">
@@ -16,6 +17,15 @@
 </head>
 <body>
   <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
+
+  <!-- Flutter Web runner: boots the Flutter application when served by Flutter -->
+  <script src="flutter_bootstrap.js" async></script>
+
+  <!-- React / Vite runner: boots React web app when served by Vite -->
+  <script type="module">
+    if (window.location.port === '4173' || window.location.port === '5173') {
+      import('/src/main.tsx');
+    }
+  </script>
 </body>
 </html>
