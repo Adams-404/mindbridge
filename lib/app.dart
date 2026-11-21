@@ -1,8 +1,9 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/theme.dart';
+import 'core/widgets.dart';
 import 'features/assistant/assistant_screen.dart';
 import 'features/check_in/check_in_screen.dart';
 import 'features/home/home_screen.dart';
@@ -13,25 +14,109 @@ import 'features/reminders/reminder_screen.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/support/support_screen.dart';
 
+Page<dynamic> _buildFadeSlidePage({
+  required BuildContext context,
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 250),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
+      return FadeTransition(
+        opacity: curved,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.025),
+            end: Offset.zero,
+          ).animate(curved),
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
 final _routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/welcome',
     routes: [
-      GoRoute(path: '/welcome', builder: (context, state) => const WelcomeScreen()),
+      GoRoute(
+        path: '/welcome',
+        builder: (context, state) => const WelcomeScreen(),
+      ),
       ShellRoute(
         builder: (context, state, child) => AppShell(
           location: state.uri.path,
           child: child,
         ),
         routes: [
-          GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
-          GoRoute(path: '/learn', builder: (context, state) => const LearnScreen()),
-          GoRoute(path: '/check-in', builder: (context, state) => const CheckInScreen()),
-          GoRoute(path: '/reset', builder: (context, state) => const ResetScreen()),
-          GoRoute(path: '/support', builder: (context, state) => const SupportScreen()),
-          GoRoute(path: '/settings', builder: (context, state) => const SettingsScreen()),
-          GoRoute(path: '/reminders', builder: (context, state) => const ReminderScreen()),
-          GoRoute(path: '/assistant', builder: (context, state) => const AssistantScreen()),
+          GoRoute(
+            path: '/',
+            pageBuilder: (context, state) => _buildFadeSlidePage(
+              context: context,
+              state: state,
+              child: const HomeScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/learn',
+            pageBuilder: (context, state) => _buildFadeSlidePage(
+              context: context,
+              state: state,
+              child: const LearnScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/check-in',
+            pageBuilder: (context, state) => _buildFadeSlidePage(
+              context: context,
+              state: state,
+              child: const CheckInScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/reset',
+            pageBuilder: (context, state) => _buildFadeSlidePage(
+              context: context,
+              state: state,
+              child: const ResetScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/support',
+            pageBuilder: (context, state) => _buildFadeSlidePage(
+              context: context,
+              state: state,
+              child: const SupportScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/settings',
+            pageBuilder: (context, state) => _buildFadeSlidePage(
+              context: context,
+              state: state,
+              child: const SettingsScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/reminders',
+            pageBuilder: (context, state) => _buildFadeSlidePage(
+              context: context,
+              state: state,
+              child: const ReminderScreen(),
+            ),
+          ),
+          GoRoute(
+            path: '/assistant',
+            pageBuilder: (context, state) => _buildFadeSlidePage(
+              context: context,
+              state: state,
+              child: const AssistantScreen(),
+            ),
+          ),
         ],
       ),
     ],
@@ -68,19 +153,25 @@ class AppShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(child: child),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _index,
-        onDestinationSelected: (index) {
-          const paths = ['/', '/learn', '/check-in', '/support'];
-          context.go(paths[index]);
-        },
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.menu_book_outlined), selectedIcon: Icon(Icons.menu_book), label: 'Learn'),
-          NavigationDestination(icon: Icon(Icons.spa_outlined), selectedIcon: Icon(Icons.spa), label: 'Check-in'),
-          NavigationDestination(icon: Icon(Icons.favorite_border), selectedIcon: Icon(Icons.favorite), label: 'Support'),
-        ],
+      backgroundColor: MindBridgeTheme.milk,
+      body: SafeArea(
+        bottom: false,
+        child: child,
+      ),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+          child: FloatingBottomBar(
+            selectedIndex: _index,
+            onDestinationSelected: (index) {
+              const paths = ['/', '/learn', '/check-in', '/support'];
+              if (index >= 0 && index < paths.length) {
+                context.go(paths[index]);
+              }
+            },
+          ),
+        ),
       ),
     );
   }

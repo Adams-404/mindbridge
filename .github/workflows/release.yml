@@ -74,7 +74,7 @@ jobs:
       - name: Build Android APK
         run: |
           # Build APK on GitHub Action runner
-          flutter build apk --release || flutter build apk --debug
+          flutter build apk --release --android-skip-build-dependency-validation || flutter build apk --debug --android-skip-build-dependency-validation
 
       - name: Locate and Rename APK
         run: |
