@@ -19,7 +19,7 @@ void main() {
     expect(find.text('What MindBridge can and cannot do'), findsOneWidget);
     expect(find.textContaining('No account is needed'), findsOneWidget);
 
-    final continueButton = find.byType(FilledButton).last;
+    final continueButton = find.widgetWithText(FilledButton, 'Continue to MindBridge');
     await tester.dragUntilVisible(
       continueButton,
       find.byType(Scrollable).first,

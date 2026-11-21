@@ -9,7 +9,7 @@ MindBridge AI is being designed to connect people with trusted mental health inf
 ## Repository
 
 - `lib/`, `test/`, `pubspec.yaml` — Flutter application at the repository root.
-- `web/` — responsive public landing page.
+- `web/` — React web application and responsive public landing page.
 - `docs/` — research, product requirements, UX direction, architecture, safety, and roadmap.
 - `.github/` — CI workflows.
 
@@ -36,11 +36,12 @@ flutter run
 
 See [docs/flutter-development.md](docs/flutter-development.md) for setup, checks, and current prototype journeys.
 
-## Preview the landing page
+## Run the web application
 
 ```bash
 cd web
-python3 -m http.server 4173
+npm install
+npm run dev
 ```
 
 Then open http://localhost:4173.
