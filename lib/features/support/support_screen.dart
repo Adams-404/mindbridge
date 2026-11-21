@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/localization/app_strings.dart';
+import '../../core/providers.dart';
 import '../../core/widgets.dart';
 import '../../core/theme.dart';
 
-class SupportScreen extends StatelessWidget {
+class SupportScreen extends ConsumerWidget {
   const SupportScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(languageProvider);
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 25, 20, 40),
       children: [
-        const PageHeading(
-          eyebrow: 'YOU DO NOT HAVE TO FIGURE IT OUT ALONE',
-          title: 'Finding the\nright support.',
+        PageHeading(
+          eyebrow: AppStrings.supportEyebrow(language),
+          title: AppStrings.supportTitle(language),
           subtitle: 'Learning about your options can be a useful first step. A qualified health professional can help you understand what support may be appropriate.',
         ),
         const SizedBox(height: 24),
@@ -39,10 +44,10 @@ class SupportScreen extends StatelessWidget {
                 child: const Icon(Icons.people_alt_outlined, size: 26, color: MindBridgeTheme.forest),
               ),
               const SizedBox(height: 14),
-              Text('Verified support directory', style: Theme.of(context).textTheme.titleLarge),
+              Text(AppStrings.supportDirectoryTitle(language), style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 8),
               Text(
-                'We are building a process to verify professionals and services before listing them. There are no verified provider listings available in this prototype yet.',
+                AppStrings.supportDirectoryNotice(language),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 16),
@@ -69,7 +74,7 @@ class SupportScreen extends StatelessWidget {
         const _PromptRow(text: 'What are the costs and available options?'),
         const _PromptRow(text: 'How is my information kept private?'),
         const SizedBox(height: 24),
-        const SafetyNote(),
+        SafetyNote(text: AppStrings.safetyNoteText(language)),
         const SizedBox(height: 14),
         const Text(
           'If you or someone else may be in immediate danger, seek urgent in-person help from local emergency services or a trusted person. MindBridge is not monitored and cannot dispatch assistance. Local contact details will only be added after they are verified.',

@@ -1,7 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'core/providers.dart';
 import 'core/theme.dart';
 import 'core/widgets.dart';
 import 'features/assistant/assistant_screen.dart';
@@ -42,6 +46,7 @@ Page<dynamic> _buildFadeSlidePage({
 final _routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/welcome',
+    errorBuilder: (context, state) => NotFoundScreen(uri: state.uri.toString()),
     routes: [
       GoRoute(
         path: '/welcome',
@@ -123,15 +128,64 @@ final _routerProvider = Provider<GoRouter>((ref) {
   );
 });
 
+class _FallbackMaterialLocalizationsDelegate
+    extends LocalizationsDelegate<MaterialLocalizations> {
+  const _FallbackMaterialLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) => true;
+
+  @override
+  Future<MaterialLocalizations> load(Locale locale) async {
+    return const DefaultMaterialLocalizations();
+  }
+
+  @override
+  bool shouldReload(_FallbackMaterialLocalizationsDelegate old) => false;
+}
+
+class _FallbackCupertinoLocalizationsDelegate
+    extends LocalizationsDelegate<CupertinoLocalizations> {
+  const _FallbackCupertinoLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) => true;
+
+  @override
+  Future<CupertinoLocalizations> load(Locale locale) async {
+    return const DefaultCupertinoLocalizations();
+  }
+
+  @override
+  bool shouldReload(_FallbackCupertinoLocalizationsDelegate old) => false;
+}
+
 class MindBridgeApp extends ConsumerWidget {
   const MindBridgeApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(languageProvider);
+    final locale = language == AppLanguage.hausa
+        ? const Locale('ha')
+        : const Locale('en');
+
     return MaterialApp.router(
       title: 'MindBridge',
       debugShowCheckedModeBanner: false,
       theme: MindBridgeTheme.light,
+      locale: locale,
+      supportedLocales: const [
+        Locale('en', ''),
+        Locale('ha', ''),
+      ],
+      localizationsDelegates: const [
+        _FallbackMaterialLocalizationsDelegate(),
+        _FallbackCupertinoLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       routerConfig: ref.watch(_routerProvider),
     );
   }
@@ -170,6 +224,58 @@ class AppShell extends StatelessWidget {
                 context.go(paths[index]);
               }
             },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class NotFoundScreen extends StatelessWidget {
+  const NotFoundScreen({required this.uri, super.key});
+  final String uri;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: MindBridgeTheme.milk,
+      appBar: AppBar(
+        title: const Text('Page not found'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            context.go('/');
+          },
+        ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SectionLabel('404 · NOT FOUND'),
+              const SizedBox(height: 12),
+              Text(
+                'This page does not exist.',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox(height: 14),
+              Text(
+                'The address "$uri" was not recognized. You can return home safely.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  context.go('/');
+                },
+                icon: const Icon(Icons.home_outlined),
+                label: const Text('Return to Home'),
+              ),
+            ],
           ),
         ),
       ),

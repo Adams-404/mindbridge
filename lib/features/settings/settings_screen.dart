@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/localization/app_strings.dart';
 import '../../core/providers.dart';
 import '../../core/widgets.dart';
 import '../../core/theme.dart';
@@ -12,88 +13,106 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final language = ref.watch(languageProvider);
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 25, 20, 40),
       children: [
-        const PageHeading(
-          eyebrow: 'MAKE IT YOURS',
-          title: 'Settings.',
+        PageHeading(
+          eyebrow: AppStrings.settingsEyebrow(language),
+          title: AppStrings.settingsTitle(language),
           subtitle: 'A few ways to make MindBridge feel more comfortable to use.',
         ),
         const SizedBox(height: 27),
-        Text('Language', style: Theme.of(context).textTheme.titleLarge),
+        Text(AppStrings.settingsLanguageTitle(language), style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 6),
         Text(
-          'Choose a language. Your selection lasts only while the app is open in this prototype.',
+          AppStrings.settingsLanguageSubtitle(language),
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: 14),
+        Material(
+          color: MindBridgeTheme.paper,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
+              boxShadow: MindBridgeTheme.neoShadowSmall,
+            ),
+            child: RadioGroup<AppLanguage>(
+              groupValue: language,
+              onChanged: (value) {
+                if (value != null) {
+                  HapticFeedback.selectionClick();
+                  ref.read(languageProvider.notifier).setLanguage(value);
+                }
+              },
+              child: const Column(
+                children: [
+                  RadioListTile<AppLanguage>(
+                    value: AppLanguage.english,
+                    title: Text('English', style: TextStyle(fontWeight: FontWeight.w700)),
+                    activeColor: MindBridgeTheme.forest,
+                  ),
+                  Divider(height: 1, color: MindBridgeTheme.ink),
+                  RadioListTile<AppLanguage>(
+                    value: AppLanguage.hausa,
+                    title: Text('Hausa', style: TextStyle(fontWeight: FontWeight.w700)),
+                    subtitle: Text('Translation review in progress · Fassarar na kan bita', style: TextStyle(fontSize: 11)),
+                    activeColor: MindBridgeTheme.forest,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
         Container(
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: MindBridgeTheme.paper,
+            color: const Color(0xFFF0E3D9),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
             boxShadow: MindBridgeTheme.neoShadowSmall,
           ),
-          child: RadioGroup<AppLanguage>(
-            groupValue: language,
-            onChanged: (value) {
-              if (value != null) {
-                HapticFeedback.selectionClick();
-                ref.read(languageProvider.notifier).state = value;
-              }
-            },
-            child: const Column(
-              children: [
-                RadioListTile<AppLanguage>(
-                  value: AppLanguage.english,
-                  title: Text('English', style: TextStyle(fontWeight: FontWeight.w700)),
-                  activeColor: MindBridgeTheme.forest,
-                ),
-                Divider(height: 1, color: MindBridgeTheme.ink),
-                RadioListTile<AppLanguage>(
-                  value: AppLanguage.hausa,
-                  title: Text('Hausa', style: TextStyle(fontWeight: FontWeight.w700)),
-                  subtitle: Text('Translation review in progress', style: TextStyle(fontSize: 11)),
-                  activeColor: MindBridgeTheme.forest,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.verified_user_outlined, size: 18, color: MindBridgeTheme.forest),
+                  SizedBox(width: 8),
+                  Text(
+                    'Translation Review Status',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: MindBridgeTheme.ink),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                AppStrings.reviewDisclaimerEn,
+                style: TextStyle(fontSize: 11, height: 1.5, color: MindBridgeTheme.ink),
+              ),
+              if (language == AppLanguage.hausa) ...[
+                const SizedBox(height: 8),
+                const Text(
+                  AppStrings.reviewDisclaimerHa,
+                  style: TextStyle(fontSize: 11, height: 1.5, fontStyle: FontStyle.italic, color: MindBridgeTheme.ink),
                 ),
               ],
-            ),
+            ],
           ),
         ),
-        if (language == AppLanguage.hausa) ...[
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF0E3D9),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: MindBridgeTheme.ink, width: 1.4),
-              boxShadow: MindBridgeTheme.neoShadowSmall,
-            ),
-            child: const Text(
-              'The app remains in English for now. Hausa interface copy is not ready until language and mental-health contributors complete their review.',
-              style: TextStyle(fontSize: 12, height: 1.5, fontWeight: FontWeight.w600, color: MindBridgeTheme.ink),
-            ),
-          ),
-        ],
         const SizedBox(height: 28),
         const Divider(color: MindBridgeTheme.ink, thickness: 1.5),
         const SizedBox(height: 16),
-        Text('Privacy and safety', style: Theme.of(context).textTheme.titleLarge),
+        Text(AppStrings.settingsPrivacyTitle(language), style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 14),
         const _InfoTile(icon: Icons.lock_outline, title: 'No account needed', subtitle: 'This prototype does not ask you to sign in.'),
         const _InfoTile(icon: Icons.visibility_off_outlined, title: 'Check-ins are not saved', subtitle: 'Your selection stays on the check-in screen only.'),
         const _InfoTile(icon: Icons.health_and_safety_outlined, title: 'Not a medical service', subtitle: 'MindBridge does not diagnose or replace professional care.'),
         const SizedBox(height: 22),
-        const SafetyNote(compact: true),
-        const SizedBox(height: 22),
-        Center(
-          child: Text(
-            'MindBridge AI · Prototype 0.1.0',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: MindBridgeTheme.muted, fontWeight: FontWeight.w600),
-          ),
-        ),
+        SafetyNote(compact: true, text: AppStrings.safetyNoteText(language)),
       ],
     );
   }

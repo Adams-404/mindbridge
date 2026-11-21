@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'providers.dart';
 import 'theme.dart';
 
 class SectionLabel extends StatelessWidget {
@@ -20,11 +22,15 @@ class SectionLabel extends StatelessWidget {
 }
 
 class SafetyNote extends StatelessWidget {
-  const SafetyNote({super.key, this.compact = false});
+  const SafetyNote({super.key, this.compact = false, this.text});
   final bool compact;
+  final String? text;
 
   @override
   Widget build(BuildContext context) {
+    final content = text ??
+        'MindBridge shares general information. It does not diagnose conditions or replace care from a qualified health professional.';
+
     return Container(
       padding: EdgeInsets.all(compact ? 13 : 16),
       decoration: BoxDecoration(
@@ -40,7 +46,7 @@ class SafetyNote extends StatelessWidget {
           const SizedBox(width: 11),
           Expanded(
             child: Text(
-              'MindBridge shares general information. It does not diagnose conditions or replace care from a qualified health professional.',
+              content,
               style: TextStyle(
                 fontSize: compact ? 11 : 12,
                 height: 1.5,
@@ -111,7 +117,7 @@ class NeoCard extends StatelessWidget {
   }
 }
 
-class FloatingBottomBar extends StatelessWidget {
+class FloatingBottomBar extends ConsumerWidget {
   const FloatingBottomBar({
     required this.selectedIndex,
     required this.onDestinationSelected,
@@ -122,7 +128,10 @@ class FloatingBottomBar extends StatelessWidget {
   final ValueChanged<int> onDestinationSelected;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(languageProvider);
+    final isHausa = language == AppLanguage.hausa;
+
     return Container(
       decoration: BoxDecoration(
         color: MindBridgeTheme.paper,
@@ -137,28 +146,28 @@ class FloatingBottomBar extends StatelessWidget {
           _FloatingNavItem(
             icon: Icons.home_outlined,
             selectedIcon: Icons.home_rounded,
-            label: 'Home',
+            label: isHausa ? 'Gida' : 'Home',
             isSelected: selectedIndex == 0,
             onTap: () => onDestinationSelected(0),
           ),
           _FloatingNavItem(
             icon: Icons.menu_book_outlined,
             selectedIcon: Icons.menu_book_rounded,
-            label: 'Learn',
+            label: isHausa ? 'Koyi' : 'Learn',
             isSelected: selectedIndex == 1,
             onTap: () => onDestinationSelected(1),
           ),
           _FloatingNavItem(
             icon: Icons.spa_outlined,
             selectedIcon: Icons.spa_rounded,
-            label: 'Check-in',
+            label: isHausa ? 'Dubawa' : 'Check-in',
             isSelected: selectedIndex == 2,
             onTap: () => onDestinationSelected(2),
           ),
           _FloatingNavItem(
             icon: Icons.favorite_border_rounded,
             selectedIcon: Icons.favorite_rounded,
-            label: 'Support',
+            label: isHausa ? 'Tallafi' : 'Support',
             isSelected: selectedIndex == 3,
             onTap: () => onDestinationSelected(3),
           ),

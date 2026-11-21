@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/localization/app_strings.dart';
+import '../../core/providers.dart';
 import '../../core/widgets.dart';
 import '../../core/theme.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(languageProvider);
+
     return CustomScrollView(
       slivers: [
         SliverPadding(
@@ -32,15 +37,15 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 30),
-              const SectionLabel('A SPACE TO BEGIN'),
+              SectionLabel(AppStrings.homeSpaceToBegin(language)),
               const SizedBox(height: 12),
               Text(
-                'Good to have\nyou here.',
+                AppStrings.homeGreeting(language),
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 36, height: 1.08),
               ),
               const SizedBox(height: 12),
               Text(
-                'You can take your time. Explore what feels useful, and leave the rest for another day.',
+                AppStrings.homeSubtitle(language),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 24),
@@ -55,14 +60,14 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SectionLabel('A MOMENT FOR YOU'),
+                    SectionLabel(AppStrings.homeMomentForYou(language)),
                     const SizedBox(height: 10),
                     Text(
-                      'How are things\nfeeling today?',
+                      AppStrings.homeHowAreThings(language),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 24, height: 1.15),
                     ),
                     const SizedBox(height: 6),
-                    Text('No right answer. Just yours.', style: Theme.of(context).textTheme.bodyMedium),
+                    Text(AppStrings.homeNoRightAnswer(language), style: Theme.of(context).textTheme.bodyMedium),
                     const SizedBox(height: 18),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -71,53 +76,53 @@ class HomeScreen extends StatelessWidget {
                           HapticFeedback.mediumImpact();
                           context.go('/check-in');
                         },
-                        child: const Text('Check in, if you like'),
+                        child: Text(AppStrings.homeCheckInButton(language)),
                       ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 32),
-              Text('A place to begin', style: Theme.of(context).textTheme.titleLarge),
+              Text(AppStrings.homePlaceToBegin(language), style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 14),
               _HomeAction(
                 icon: Icons.menu_book_outlined,
-                title: 'Learn and understand',
-                subtitle: 'Explore mental health information',
+                title: AppStrings.homeActionLearnTitle(language),
+                subtitle: AppStrings.homeActionLearnSubtitle(language),
                 onTap: () => context.go('/learn'),
               ),
               const SizedBox(height: 12),
               _HomeAction(
                 icon: Icons.air_rounded,
-                title: 'Take a breathing pause',
-                subtitle: 'A few moments at your own pace',
+                title: AppStrings.homeActionBreathingTitle(language),
+                subtitle: AppStrings.homeActionBreathingSubtitle(language),
                 onTap: () => context.go('/reset'),
                 accent: true,
               ),
               const SizedBox(height: 12),
               _HomeAction(
                 icon: Icons.favorite_border,
-                title: 'Find support',
-                subtitle: 'Understand your options for professional care',
+                title: AppStrings.homeActionSupportTitle(language),
+                subtitle: AppStrings.homeActionSupportSubtitle(language),
                 onTap: () => context.go('/support'),
               ),
               const SizedBox(height: 12),
               _HomeAction(
                 icon: Icons.event_note_outlined,
-                title: 'Keep a follow-up in sight',
-                subtitle: 'Make a personal reminder',
+                title: AppStrings.homeActionRemindersTitle(language),
+                subtitle: AppStrings.homeActionRemindersSubtitle(language),
                 onTap: () => context.go('/reminders'),
                 accent: true,
               ),
               const SizedBox(height: 12),
               _HomeAction(
                 icon: Icons.chat_bubble_outline,
-                title: 'MindBridge information assistant',
-                subtitle: 'A planned feature, not active yet',
+                title: AppStrings.homeActionAssistantTitle(language),
+                subtitle: AppStrings.homeActionAssistantSubtitle(language),
                 onTap: () => context.go('/assistant'),
               ),
               const SizedBox(height: 26),
-              const SafetyNote(compact: true),
+              SafetyNote(compact: true, text: AppStrings.safetyNoteText(language)),
               const SizedBox(height: 28),
             ]),
           ),
