@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../core/providers.dart';
 import '../../core/theme.dart';
 
-class WelcomeScreen extends StatefulWidget {
+class WelcomeScreen extends ConsumerStatefulWidget {
   const WelcomeScreen({super.key});
 
   @override
-  State<WelcomeScreen> createState() => _WelcomeScreenState();
+  ConsumerState<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
-  static const _seenKey = 'mindbridge_onboarding_seen';
+class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
   bool _checking = true;
 
   @override
@@ -23,9 +23,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   Future<void> _checkFirstRun() async {
-    final preferences = await SharedPreferences.getInstance();
+    final settingsRepo = ref.read(settingsRepositoryProvider);
+    final hasSeen = await settingsRepo.hasSeenOnboarding();
     if (!mounted) return;
-    if (preferences.getBool(_seenKey) == true) {
+    if (hasSeen) {
       context.go('/');
       return;
     }
@@ -34,8 +35,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   Future<void> _finish() async {
     HapticFeedback.mediumImpact();
-    final preferences = await SharedPreferences.getInstance();
-    await preferences.setBool(_seenKey, true);
+    await ref.read(settingsRepositoryProvider).setOnboardingSeen(true);
     if (mounted) context.go('/');
   }
 

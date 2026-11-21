@@ -38,10 +38,9 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
     final title = _controller.text.trim();
     if (title.isEmpty) return;
     HapticFeedback.mediumImpact();
-    ref.read(remindersProvider.notifier).update((items) => [
-      ...items,
+    ref.read(remindersProvider.notifier).addReminder(
       FollowUpReminder(title: title, date: _date),
-    ]);
+    );
     _controller.clear();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Follow-up added for this session.')),
@@ -130,10 +129,7 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
                   tooltip: 'Delete reminder',
                   onPressed: () {
                     HapticFeedback.lightImpact();
-                    ref.read(remindersProvider.notifier).update((items) => [
-                      for (var i = 0; i < items.length; i++)
-                        if (i != entry.key) items[i],
-                    ]);
+                    ref.read(remindersProvider.notifier).removeReminder(entry.key);
                   },
                   icon: const Icon(Icons.delete_outline_rounded, color: MindBridgeTheme.clay),
                 ),

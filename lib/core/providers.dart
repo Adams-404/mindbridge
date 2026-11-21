@@ -1,29 +1,34 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../data/reminders_repository.dart';
+import '../data/settings_repository.dart';
+
+export '../data/reminders_repository.dart' show FollowUpReminder, remindersRepositoryProvider;
+export '../data/settings_repository.dart' show SettingsRepository, settingsRepositoryProvider;
+export '../data/support_repository.dart' show SupportRepository, supportRepositoryProvider;
 
 enum AppLanguage { english, hausa }
 
 class LanguageNotifier extends StateNotifier<AppLanguage> {
-  LanguageNotifier([super.initial = AppLanguage.english]) {
+  LanguageNotifier(this._repository, [super.initial = AppLanguage.english]) {
     _loadPreference();
   }
 
-  static const prefKey = 'mindbridge_language';
+  final SettingsRepository _repository;
+  bool _initialized = false;
 
   Future<void> _loadPreference() async {
-    final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getString(prefKey);
-    if (saved == 'hausa') {
-      super.state = AppLanguage.hausa;
-    } else if (saved == 'english') {
-      super.state = AppLanguage.english;
+    final saved = await _repository.getLanguage();
+    if (!_initialized) {
+      super.state = saved;
+      _initialized = true;
     }
   }
 
   Future<void> setLanguage(AppLanguage language) async {
+    _initialized = true;
     super.state = language;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(prefKey, language.name);
+    await _repository.setLanguage(language);
   }
 
   @override
@@ -33,7 +38,8 @@ class LanguageNotifier extends StateNotifier<AppLanguage> {
 }
 
 final languageProvider = StateNotifierProvider<LanguageNotifier, AppLanguage>((ref) {
-  return LanguageNotifier();
+  final repository = ref.watch(settingsRepositoryProvider);
+  return LanguageNotifier(repository);
 });
 
 final isHausaSelectedProvider = Provider<bool>(
@@ -42,10 +48,37 @@ final isHausaSelectedProvider = Provider<bool>(
 
 final moodSelectionProvider = StateProvider<String?>((ref) => null);
 
-class FollowUpReminder {
-  const FollowUpReminder({required this.title, required this.date});
-  final String title;
-  final DateTime date;
+class RemindersNotifier extends StateNotifier<List<FollowUpReminder>> {
+  RemindersNotifier(this._repository) : super(List.of(_repository.getReminders()));
+
+  final RemindersRepository _repository;
+
+  void addReminder(FollowUpReminder reminder) {
+    _repository.addReminder(reminder);
+    state = List.of(_repository.getReminders());
+  }
+
+  void removeReminder(int index) {
+    _repository.removeReminder(index);
+    state = List.of(_repository.getReminders());
+  }
+
+  void clear() {
+    _repository.clear();
+    state = const [];
+  }
+
+  void update(List<FollowUpReminder> Function(List<FollowUpReminder>) callback) {
+    final next = callback(state);
+    _repository.clear();
+    for (final item in next) {
+      _repository.addReminder(item);
+    }
+    state = List.of(next);
+  }
 }
 
-final remindersProvider = StateProvider<List<FollowUpReminder>>((ref) => []);
+final remindersProvider = StateNotifierProvider<RemindersNotifier, List<FollowUpReminder>>((ref) {
+  final repository = ref.watch(remindersRepositoryProvider);
+  return RemindersNotifier(repository);
+});

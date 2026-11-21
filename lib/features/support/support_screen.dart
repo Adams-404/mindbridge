@@ -5,6 +5,7 @@ import '../../core/localization/app_strings.dart';
 import '../../core/providers.dart';
 import '../../core/widgets.dart';
 import '../../core/theme.dart';
+import '../../data/support_repository.dart';
 
 class SupportScreen extends ConsumerWidget {
   const SupportScreen({super.key});
@@ -12,6 +13,8 @@ class SupportScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final language = ref.watch(languageProvider);
+    final directoryMetadata = ref.watch(supportDirectoryMetadataProvider).valueOrNull;
+    final noticeText = directoryMetadata?.statusMessage ?? AppStrings.supportDirectoryNotice(language);
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 25, 20, 40),
@@ -47,7 +50,7 @@ class SupportScreen extends ConsumerWidget {
               Text(AppStrings.supportDirectoryTitle(language), style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 8),
               Text(
-                AppStrings.supportDirectoryNotice(language),
+                noticeText,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 16),
