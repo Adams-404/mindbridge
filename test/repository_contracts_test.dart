@@ -41,6 +41,12 @@ class FakeSupportRepository implements SupportRepository {
 
   @override
   Future<List<SupportProviderEntry>> getProviders() async => providers;
+
+  @override
+  List<CrisisHelplineEntry> getCrisisHelplines() => verifiedCrisisHelplines;
+
+  @override
+  List<AppointmentPrepItem> getAppointmentPrepItems() => appointmentPrepQuestions;
 }
 
 class FakeSettingsRepository implements SettingsRepository {
