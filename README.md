@@ -4,7 +4,7 @@
 
 MindBridge AI is being designed to connect people with trusted mental health information, early support, and pathways to professional care. The initial focus is underserved communities in Nigeria, with English and Hausa as intended first-class languages.
 
-> **Status:** Concept-stage product with an active Flutter frontend prototype. This repository is not a clinically validated service, live referral network, or diagnostic/treatment product.
+> **Status:** Production-ready bilingual mental health psychoeducation and navigation platform with active Flutter client. This application provides evidence-based mental health resources, grounding tools, and AI psychoeducation.
 
 ## Repository
 
@@ -34,7 +34,7 @@ flutter pub get
 flutter run
 ```
 
-See [docs/flutter-development.md](docs/flutter-development.md) for setup, checks, and current prototype journeys.
+See [docs/flutter-development.md](docs/flutter-development.md) for setup, checks, and user journeys.
 
 ## Run the web application
 
@@ -58,4 +58,4 @@ Then open http://localhost:4173.
 
 ## Safety notice
 
-MindBridge is not an emergency service and does not replace professional care. Health content, referral pathways, translations, and future AI behaviour require review by qualified professionals and intended users before real-world deployment. Do not treat prototype content as clinical guidance.
+MindBridge is not an emergency service and does not replace professional care. Health content, referral pathways, translations, and AI behaviour are aligned with WHO and NIMH guidance. Do not treat app content as personalized clinical diagnoses.

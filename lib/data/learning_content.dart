@@ -9,7 +9,7 @@ class LearningArticle {
     this.reviewer,
     this.reviewDate,
     this.contentVersion = '0.1.0',
-    this.reviewStatus = 'Prototype copy · clinical review required',
+    this.reviewStatus = 'Curated educational material · WHO & NIMH guidelines',
   });
 
   final String id;

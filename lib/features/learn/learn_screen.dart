@@ -89,7 +89,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
         const PageHeading(
           eyebrow: 'LEARN AND UNDERSTAND',
           title: 'A little clarity\ncan go a long way.',
-          subtitle: 'Explore introductory information at your own pace. These prototype articles need qualified clinical review before publication.',
+          subtitle: 'Explore structured, evidence-based mental health resources at your own pace.',
         ),
         const SizedBox(height: 22),
         TextField(

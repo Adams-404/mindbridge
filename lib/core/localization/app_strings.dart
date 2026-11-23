@@ -125,5 +125,5 @@ class AppStrings {
 
   static String supportDirectoryNotice(AppLanguage lang) => lang == AppLanguage.hausa
       ? 'Muna kan tsara tsarin tantance kwararru da cibiyoyi kafin sanya su a nan. Babu jerin sunayen da aka riga aka tantance a wannan samfurin tukuna.'
-      : 'We are building a process to verify professionals and services before listing them. There are no verified provider listings available in this prototype yet.';
+      : 'We are building a process to verify professionals and services before listing them. Direct provider directory integrations will appear here as they are accredited.';
 }

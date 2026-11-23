@@ -108,7 +108,7 @@ class SettingsScreen extends ConsumerWidget {
         const SizedBox(height: 16),
         Text(AppStrings.settingsPrivacyTitle(language), style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 14),
-        const _InfoTile(icon: Icons.lock_outline, title: 'No account needed', subtitle: 'This prototype does not ask you to sign in.'),
+        const _InfoTile(icon: Icons.lock_outline, title: 'No account needed', subtitle: 'MindBridge works privately on your device without requiring sign in.'),
         const _InfoTile(icon: Icons.visibility_off_outlined, title: 'Check-ins are not saved', subtitle: 'Your selection stays on the check-in screen only.'),
         const _InfoTile(icon: Icons.health_and_safety_outlined, title: 'Not a medical service', subtitle: 'MindBridge does not diagnose or replace professional care.'),
         const SizedBox(height: 22),

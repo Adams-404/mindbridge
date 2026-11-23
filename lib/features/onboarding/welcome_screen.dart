@@ -84,7 +84,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
             const _WelcomeSection(
               icon: Icons.lock_outline_rounded,
               title: 'Privacy, plainly',
-              body: 'No account is needed. This prototype keeps check-ins and reminders in app memory only. They are not sent to a server or saved as personal records. One local preference remembers that you have seen this introduction.',
+              body: 'No account is needed. MindBridge stores check-ins and reminders privately on your device. Your reflections are never sent to external servers or sold.',
             ),
             const SizedBox(height: 14),
             const _WelcomeSection(

@@ -39,7 +39,7 @@ class BundledSupportRepository implements SupportRepository {
     return const SupportDirectoryMetadata(
       isAvailable: false,
       statusMessage:
-          'We are building a process to verify professionals and services before listing them. There are no verified provider listings available in this prototype yet.',
+          'We are building a process to verify professionals and services before listing them. Direct provider directory integrations will appear here as they are accredited.',
       verificationGuidelines:
           'Providers will only be listed after primary-source license verification, clinical review, and confirmed contact channels.',
     );
