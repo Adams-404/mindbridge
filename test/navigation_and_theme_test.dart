@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mindbridge/app.dart';
-import 'package:mindbridge/core/providers.dart';
-import 'package:mindbridge/core/theme.dart';
 import 'package:mindbridge/core/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
