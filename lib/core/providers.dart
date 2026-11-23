@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/ai_repository.dart';
+import '../data/check_in_repository.dart';
 import '../data/reminders_repository.dart';
 import '../data/settings_repository.dart';
 
 export '../data/ai_repository.dart' show AiRepository, ChatMessage, aiRepositoryProvider;
+export '../data/check_in_repository.dart' show CheckInEntry, CheckInRepository, checkInRepositoryProvider;
 export '../data/reminders_repository.dart' show FollowUpReminder, remindersRepositoryProvider;
 export '../data/settings_repository.dart' show SettingsRepository, settingsRepositoryProvider;
 export '../data/support_repository.dart' show SupportRepository, supportRepositoryProvider;
@@ -83,6 +85,54 @@ final isHausaSelectedProvider = Provider<bool>(
 );
 
 final moodSelectionProvider = StateProvider<String?>((ref) => null);
+
+class CheckInNotifier extends StateNotifier<List<CheckInEntry>> {
+  CheckInNotifier(this._repository) : super([]) {
+    loadEntries();
+  }
+
+  final CheckInRepository _repository;
+
+  Future<void> loadEntries() async {
+    final entries = await _repository.getEntries();
+    state = entries;
+  }
+
+  Future<void> addCheckIn({
+    required String mood,
+    required String symbol,
+    required int score,
+    String note = '',
+    List<String> factors = const [],
+  }) async {
+    final entry = CheckInEntry(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      timestamp: DateTime.now(),
+      mood: mood,
+      symbol: symbol,
+      score: score,
+      note: note,
+      factors: factors,
+    );
+    await _repository.addEntry(entry);
+    state = [entry, ...state];
+  }
+
+  Future<void> deleteCheckIn(String id) async {
+    await _repository.deleteEntry(id);
+    state = state.where((e) => e.id != id).toList();
+  }
+
+  Future<void> clearAll() async {
+    await _repository.clearAll();
+    state = [];
+  }
+}
+
+final checkInHistoryProvider = StateNotifierProvider<CheckInNotifier, List<CheckInEntry>>((ref) {
+  final repo = ref.watch(checkInRepositoryProvider);
+  return CheckInNotifier(repo);
+});
 
 class RemindersNotifier extends StateNotifier<List<FollowUpReminder>> {
   RemindersNotifier(this._repository) : super(List.of(_repository.getReminders()));
