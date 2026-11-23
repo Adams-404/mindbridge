@@ -22,12 +22,12 @@ class SupportScreen extends ConsumerWidget {
     final checkedIds = ref.watch(supportChecklistProvider);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF141414) : MindBridgeTheme.paper;
-    final borderColor = isDark ? MindBridgeTheme.paper : MindBridgeTheme.ink;
-    final textColor = isDark ? MindBridgeTheme.paper : MindBridgeTheme.ink;
+    final cardBg = isDark ? Colors.black : MindBridgeTheme.paper;
+    final borderColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
+    final textColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 25, 20, 100),
+      padding: const EdgeInsets.fromLTRB(20, 84, 20, 100),
       children: [
         PageHeading(
           eyebrow: AppStrings.supportEyebrow(language),

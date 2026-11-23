@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/ai_repository.dart';
+import '../data/chat_history_repository.dart';
 import '../data/check_in_repository.dart';
 import '../data/reminders_repository.dart';
 import '../data/settings_repository.dart';
 
 export '../data/ai_repository.dart' show AiRepository, ChatMessage, aiRepositoryProvider;
+export '../data/chat_history_repository.dart' show ChatHistoryRepository, ChatSession, chatHistoryRepositoryProvider;
 export '../data/check_in_repository.dart' show CheckInEntry, CheckInRepository, checkInRepositoryProvider;
 export '../data/reminders_repository.dart' show FollowUpReminder, remindersRepositoryProvider;
 export '../data/settings_repository.dart' show SettingsRepository, settingsRepositoryProvider;
@@ -171,21 +173,29 @@ final remindersProvider = StateNotifierProvider<RemindersNotifier, List<FollowUp
 
 class ChatState {
   const ChatState({
+    this.sessionId,
+    this.sessionTitle,
     this.messages = const [],
     this.isLoading = false,
     this.errorMessage,
   });
 
+  final String? sessionId;
+  final String? sessionTitle;
   final List<ChatMessage> messages;
   final bool isLoading;
   final String? errorMessage;
 
   ChatState copyWith({
+    String? sessionId,
+    String? sessionTitle,
     List<ChatMessage>? messages,
     bool? isLoading,
     String? errorMessage,
   }) {
     return ChatState(
+      sessionId: sessionId ?? this.sessionId,
+      sessionTitle: sessionTitle ?? this.sessionTitle,
       messages: messages ?? this.messages,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
@@ -194,29 +204,68 @@ class ChatState {
 }
 
 class ChatNotifier extends StateNotifier<ChatState> {
-  ChatNotifier(this._aiRepository) : super(const ChatState());
+  ChatNotifier(this._aiRepository, this._chatHistoryRepository) : super(const ChatState());
 
   final AiRepository _aiRepository;
+  final ChatHistoryRepository _chatHistoryRepository;
+
+  void startNewChat() {
+    state = const ChatState();
+  }
+
+  void loadSession(ChatSession session) {
+    state = ChatState(
+      sessionId: session.id,
+      sessionTitle: session.title,
+      messages: session.messages,
+      isLoading: false,
+    );
+  }
 
   Future<void> sendUserMessage(String content) async {
     final trimmed = content.trim();
     if (trimmed.isEmpty || state.isLoading) return;
 
+    final sessionId = state.sessionId ?? DateTime.now().millisecondsSinceEpoch.toString();
+    final sessionTitle = state.sessionTitle ??
+        (trimmed.length > 36 ? '${trimmed.substring(0, 36)}...' : trimmed);
+
     final userMessage = ChatMessage.user(trimmed);
     final updatedMessages = [...state.messages, userMessage];
 
     state = state.copyWith(
+      sessionId: sessionId,
+      sessionTitle: sessionTitle,
       messages: updatedMessages,
       isLoading: true,
       errorMessage: null,
     );
 
+    // Save user message immediately to session history
+    await _chatHistoryRepository.saveSession(
+      ChatSession(
+        id: sessionId,
+        title: sessionTitle,
+        createdAt: DateTime.now(),
+        messages: updatedMessages,
+      ),
+    );
+
     try {
       final responseText = await _aiRepository.sendMessage(updatedMessages);
       final assistantMessage = ChatMessage.assistant(responseText);
+      final finalMessages = [...updatedMessages, assistantMessage];
       state = state.copyWith(
-        messages: [...updatedMessages, assistantMessage],
+        messages: finalMessages,
         isLoading: false,
+      );
+      await _chatHistoryRepository.saveSession(
+        ChatSession(
+          id: sessionId,
+          title: sessionTitle,
+          createdAt: DateTime.now(),
+          messages: finalMessages,
+        ),
       );
     } catch (e) {
       state = state.copyWith(
@@ -226,12 +275,43 @@ class ChatNotifier extends StateNotifier<ChatState> {
     }
   }
 
+  Future<void> deleteSession(String id) async {
+    await _chatHistoryRepository.deleteSession(id);
+    if (state.sessionId == id) {
+      state = const ChatState();
+    }
+  }
+
   void clearConversation() {
     state = const ChatState();
   }
 }
 
+class ChatSessionsNotifier extends StateNotifier<List<ChatSession>> {
+  ChatSessionsNotifier(this._repository) : super([]) {
+    loadSessions();
+  }
+
+  final ChatHistoryRepository _repository;
+
+  Future<void> loadSessions() async {
+    final list = await _repository.getSessions();
+    state = list;
+  }
+
+  Future<void> deleteSession(String id) async {
+    await _repository.deleteSession(id);
+    state = state.where((s) => s.id != id).toList();
+  }
+}
+
+final chatSessionsProvider = StateNotifierProvider<ChatSessionsNotifier, List<ChatSession>>((ref) {
+  final repo = ref.watch(chatHistoryRepositoryProvider);
+  return ChatSessionsNotifier(repo);
+});
+
 final chatProvider = StateNotifierProvider<ChatNotifier, ChatState>((ref) {
   final aiRepo = ref.watch(aiRepositoryProvider);
-  return ChatNotifier(aiRepo);
+  final chatHistoryRepo = ref.watch(chatHistoryRepositoryProvider);
+  return ChatNotifier(aiRepo, chatHistoryRepo);
 });

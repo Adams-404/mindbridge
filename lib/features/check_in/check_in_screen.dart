@@ -96,7 +96,7 @@ class _CheckInScreenState extends ConsumerState<CheckInScreen> {
     final isDark = theme.brightness == Brightness.dark;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 110),
+      padding: const EdgeInsets.fromLTRB(20, 84, 20, 110),
       children: [
         PageHeading(
           eyebrow: isHausa ? 'LOKACI DON KAI' : 'A MOMENT FOR YOU',

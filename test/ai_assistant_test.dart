@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mindbridge/core/config/ai_config.dart';
 import 'package:mindbridge/core/providers.dart';
 import 'package:mindbridge/data/ai_repository.dart';
@@ -32,6 +33,33 @@ class FakeAiRepository implements AiRepository {
     }
     return customResponse ??
         'This is a compassionate psychoeducational response from MindBridge AI.';
+  }
+}
+
+class FakeChatHistoryRepository implements ChatHistoryRepository {
+  final List<ChatSession> sessions = [];
+
+  @override
+  Future<List<ChatSession>> getSessions() async => List.of(sessions);
+
+  @override
+  Future<void> saveSession(ChatSession session) async {
+    final idx = sessions.indexWhere((s) => s.id == session.id);
+    if (idx >= 0) {
+      sessions[idx] = session;
+    } else {
+      sessions.insert(0, session);
+    }
+  }
+
+  @override
+  Future<void> deleteSession(String id) async {
+    sessions.removeWhere((s) => s.id == id);
+  }
+
+  @override
+  Future<void> clearAllSessions() async {
+    sessions.clear();
   }
 }
 
@@ -66,6 +94,10 @@ class FakeSettingsRepository implements SettingsRepository {
 }
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+  });
+
   group('AiConfig & Groq specifications', () {
     test('Default configuration targets Groq Qwen 3.8 27B with safety boundaries', () {
       expect(AiConfig.groqApiUrl, 'https://api.groq.com/openai/v1/chat/completions');
@@ -137,7 +169,7 @@ void main() {
   group('ChatNotifier & Riverpod state', () {
     test('User message submission updates state and receives assistant reply', () async {
       final fakeRepo = FakeAiRepository(customResponse: 'Stress is your body reaction.');
-      final notifier = ChatNotifier(fakeRepo);
+      final notifier = ChatNotifier(fakeRepo, FakeChatHistoryRepository());
 
       expect(notifier.state.messages, isEmpty);
       expect(notifier.state.isLoading, isFalse);
@@ -158,7 +190,7 @@ void main() {
 
     test('Error during message sending captures errorMessage in state', () async {
       final fakeRepo = FakeAiRepository(throwError: true);
-      final notifier = ChatNotifier(fakeRepo);
+      final notifier = ChatNotifier(fakeRepo, FakeChatHistoryRepository());
 
       await notifier.sendUserMessage('Test error');
 
@@ -169,7 +201,7 @@ void main() {
 
     test('clearConversation resets all messages', () async {
       final fakeRepo = FakeAiRepository();
-      final notifier = ChatNotifier(fakeRepo);
+      final notifier = ChatNotifier(fakeRepo, FakeChatHistoryRepository());
 
       await notifier.sendUserMessage('Hi');
       expect(notifier.state.messages, isNotEmpty);
@@ -187,12 +219,14 @@ void main() {
         delay: const Duration(milliseconds: 100),
       );
       final fakeSettings = FakeSettingsRepository();
+      final fakeHistory = FakeChatHistoryRepository();
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             aiRepositoryProvider.overrideWithValue(fakeRepo),
             settingsRepositoryProvider.overrideWithValue(fakeSettings),
+            chatHistoryRepositoryProvider.overrideWithValue(fakeHistory),
           ],
           child: const MaterialApp(
             home: AssistantScreen(),
@@ -202,8 +236,8 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      // Verify active model indicator
-      expect(find.textContaining('Active Model: Qwen 3.8 27B (Groq)'), findsOneWidget);
+      // Verify active companion indicator
+      expect(find.textContaining('MindBridge AI Companion'), findsOneWidget);
       expect(find.text('Grounded Psychoeducation'), findsOneWidget);
       expect(find.text('SUGGESTED EXPLORATIONS'), findsOneWidget);
 
@@ -239,11 +273,13 @@ void main() {
       final fakeRepo = FakeAiRepository(
         customResponse: 'Breathing slowly stimulates the vagus nerve.',
       );
+      final fakeHistory = FakeChatHistoryRepository();
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
             aiRepositoryProvider.overrideWithValue(fakeRepo),
+            chatHistoryRepositoryProvider.overrideWithValue(fakeHistory),
           ],
           child: const MaterialApp(
             home: AssistantScreen(),
@@ -260,6 +296,53 @@ void main() {
 
       expect(find.text('How does deep breathing work?'), findsOneWidget);
       expect(find.text('Breathing slowly stimulates the vagus nerve.'), findsOneWidget);
+    });
+
+    testWidgets('Chat history modal displays sessions and allows starting new chat', (tester) async {
+      final fakeRepo = FakeAiRepository(customResponse: 'Saved response.');
+      final fakeHistory = FakeChatHistoryRepository();
+      await fakeHistory.saveSession(ChatSession(
+        id: 'session-1',
+        title: 'Calming techniques',
+        createdAt: DateTime.now(),
+        messages: [
+          ChatMessage.user('How to calm down?'),
+          ChatMessage.assistant('Try deep breathing.'),
+        ],
+      ));
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            aiRepositoryProvider.overrideWithValue(fakeRepo),
+            chatHistoryRepositoryProvider.overrideWithValue(fakeHistory),
+          ],
+          child: const MaterialApp(
+            home: AssistantScreen(),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      // Open history modal
+      final historyButton = find.byTooltip('Chat history');
+      expect(historyButton, findsOneWidget);
+      await tester.tap(historyButton);
+      await tester.pumpAndSettle();
+
+      // Verify history sheet contents
+      expect(find.text('Chat History'), findsOneWidget);
+      expect(find.text('Calming techniques'), findsOneWidget);
+      expect(find.text('Start New Conversation'), findsOneWidget);
+
+      // Tap on the session to load it
+      await tester.tap(find.text('Calming techniques'));
+      await tester.pumpAndSettle();
+
+      // Verify session loaded
+      expect(find.text('How to calm down?'), findsOneWidget);
+      expect(find.text('Try deep breathing.'), findsOneWidget);
     });
   });
 }

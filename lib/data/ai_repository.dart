@@ -17,10 +17,17 @@ class ChatMessage {
   final String content;
   final DateTime timestamp;
 
-  Map<String, String> toJson() => {
+  Map<String, dynamic> toJson() => {
         'role': role,
         'content': content,
+        'timestamp': timestamp.toIso8601String(),
       };
+
+  factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
+        role: json['role'] as String? ?? 'user',
+        content: json['content'] as String? ?? '',
+        timestamp: DateTime.tryParse(json['timestamp'] as String? ?? '') ?? DateTime.now(),
+      );
 
   factory ChatMessage.user(String content) => ChatMessage(
         role: 'user',
@@ -62,7 +69,7 @@ class GroqAiRepository implements AiRepository {
 
     final messages = [
       {'role': 'system', 'content': AiConfig.systemPrompt},
-      ...conversation.map((m) => m.toJson()),
+      ...conversation.map((m) => {'role': m.role, 'content': m.content}),
     ];
 
     try {

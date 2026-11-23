@@ -50,8 +50,14 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
   @override
   Widget build(BuildContext context) {
     final reminders = ref.watch(remindersProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? Colors.black : MindBridgeTheme.paper;
+    final borderColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
+    final textColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
+    final mutedColor = isDark ? MindBridgeTheme.darkMuted : MindBridgeTheme.muted;
+
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 25, 20, 40),
+      padding: const EdgeInsets.fromLTRB(20, 84, 20, 40),
       children: [
         const PageHeading(
           eyebrow: 'A NOTE TO YOUR FUTURE SELF',
@@ -62,22 +68,25 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
         TextField(
           controller: _controller,
           textCapitalization: TextCapitalization.sentences,
+          style: TextStyle(color: textColor),
           decoration: InputDecoration(
             labelText: 'What would you like to remember?',
+            labelStyle: TextStyle(color: mutedColor),
             hintText: 'e.g. Call the clinic',
+            hintStyle: TextStyle(color: mutedColor),
             filled: true,
-            fillColor: MindBridgeTheme.paper,
+            fillColor: cardBg,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
+              borderSide: BorderSide(color: borderColor, width: MindBridgeTheme.borderWidth),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: MindBridgeTheme.forest, width: 2.2),
+              borderSide: BorderSide(color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.forest, width: 2.2),
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
+              borderSide: BorderSide(color: borderColor, width: MindBridgeTheme.borderWidth),
             ),
           ),
         ),
@@ -99,14 +108,14 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: MindBridgeTheme.paper,
+              color: cardBg,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
-              boxShadow: MindBridgeTheme.neoShadowSmall,
+              border: Border.all(color: borderColor, width: MindBridgeTheme.borderWidth),
+              boxShadow: isDark ? MindBridgeTheme.neoShadowSmallDark : MindBridgeTheme.neoShadowSmall,
             ),
-            child: const Text(
+            child: Text(
               'Nothing here yet. Add a reminder above if there is something you would like to return to.',
-              style: TextStyle(fontSize: 12, height: 1.6, color: MindBridgeTheme.muted),
+              style: TextStyle(fontSize: 12, height: 1.6, color: mutedColor),
             ),
           )
         else
@@ -114,16 +123,16 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
             padding: const EdgeInsets.only(bottom: 11),
             child: Container(
               decoration: BoxDecoration(
-                color: MindBridgeTheme.paper,
+                color: cardBg,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
-                boxShadow: MindBridgeTheme.neoShadowSmall,
+                border: Border.all(color: borderColor, width: MindBridgeTheme.borderWidth),
+                boxShadow: isDark ? MindBridgeTheme.neoShadowSmallDark : MindBridgeTheme.neoShadowSmall,
               ),
               child: ListTile(
-                title: Text(entry.value.title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: MindBridgeTheme.ink)),
+                title: Text(entry.value.title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: textColor)),
                 subtitle: Text(
                   MaterialLocalizations.of(context).formatMediumDate(entry.value.date),
-                  style: const TextStyle(fontSize: 12, color: MindBridgeTheme.muted),
+                  style: TextStyle(fontSize: 12, color: mutedColor),
                 ),
                 trailing: IconButton(
                   tooltip: 'Delete reminder',
@@ -139,9 +148,9 @@ class _ReminderScreenState extends ConsumerState<ReminderScreen> {
         const SizedBox(height: 20),
         const SafetyNote(compact: true),
         const SizedBox(height: 12),
-        const Text(
+        Text(
           'These reminders are held in memory only. They do not create phone notifications, sync to a provider, or indicate that anyone is monitoring your care. Closing the app clears them.',
-          style: TextStyle(fontSize: 10, height: 1.5, color: MindBridgeTheme.muted),
+          style: TextStyle(fontSize: 10, height: 1.5, color: mutedColor),
         ),
       ],
     );

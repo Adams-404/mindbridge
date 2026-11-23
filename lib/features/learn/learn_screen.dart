@@ -24,15 +24,16 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
     HapticFeedback.lightImpact();
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? const Color(0xFF141414)
+          ? Colors.black
           : MindBridgeTheme.paper,
       shape: RoundedRectangleBorder(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         side: BorderSide(
           color: Theme.of(context).brightness == Brightness.dark
-              ? MindBridgeTheme.paper
+              ? MindBridgeTheme.milk
               : MindBridgeTheme.ink,
           width: MindBridgeTheme.borderWidth,
         ),
@@ -45,15 +46,16 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
     HapticFeedback.lightImpact();
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true,
       isScrollControlled: true,
       backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? const Color(0xFF141414)
+          ? Colors.black
           : MindBridgeTheme.paper,
       shape: RoundedRectangleBorder(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         side: BorderSide(
           color: Theme.of(context).brightness == Brightness.dark
-              ? MindBridgeTheme.paper
+              ? MindBridgeTheme.milk
               : MindBridgeTheme.ink,
           width: MindBridgeTheme.borderWidth,
         ),
@@ -65,9 +67,9 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF141414) : MindBridgeTheme.paper;
-    final borderColor = isDark ? MindBridgeTheme.paper : MindBridgeTheme.ink;
-    final textColor = isDark ? MindBridgeTheme.paper : MindBridgeTheme.ink;
+    final cardBg = isDark ? Colors.black : MindBridgeTheme.paper;
+    final borderColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
+    final textColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
 
     final articles = ref.watch(learningRepositoryProvider).getArticles();
     final downloadedIds = ref.watch(downloadedCoursesProvider);
@@ -88,7 +90,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
     }).toList();
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 25, 20, 100),
+      padding: const EdgeInsets.fromLTRB(20, 84, 20, 100),
       children: [
         const PageHeading(
           eyebrow: 'LEARN AND UNDERSTAND',

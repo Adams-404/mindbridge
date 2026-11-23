@@ -18,7 +18,7 @@ class SettingsScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 110),
+      padding: const EdgeInsets.fromLTRB(20, 84, 20, 110),
       children: [
         PageHeading(
           eyebrow: AppStrings.settingsEyebrow(language),

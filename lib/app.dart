@@ -18,21 +18,14 @@ import 'features/reminders/reminder_screen.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/support/support_screen.dart';
 
-Page<dynamic> _buildFadePage({
+Page<dynamic> _buildInstantPage({
   required BuildContext context,
   required GoRouterState state,
   required Widget child,
 }) {
-  return CustomTransitionPage<void>(
+  return NoTransitionPage<void>(
     key: state.pageKey,
     child: child,
-    transitionDuration: const Duration(milliseconds: 180),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-        child: child,
-      );
-    },
   );
 }
 
@@ -53,7 +46,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/',
-            pageBuilder: (context, state) => _buildFadePage(
+            pageBuilder: (context, state) => _buildInstantPage(
               context: context,
               state: state,
               child: const HomeScreen(),
@@ -61,7 +54,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/learn',
-            pageBuilder: (context, state) => _buildFadePage(
+            pageBuilder: (context, state) => _buildInstantPage(
               context: context,
               state: state,
               child: const LearnScreen(),
@@ -69,7 +62,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/check-in',
-            pageBuilder: (context, state) => _buildFadePage(
+            pageBuilder: (context, state) => _buildInstantPage(
               context: context,
               state: state,
               child: const CheckInScreen(),
@@ -77,7 +70,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/reset',
-            pageBuilder: (context, state) => _buildFadePage(
+            pageBuilder: (context, state) => _buildInstantPage(
               context: context,
               state: state,
               child: const ResetScreen(),
@@ -85,7 +78,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/support',
-            pageBuilder: (context, state) => _buildFadePage(
+            pageBuilder: (context, state) => _buildInstantPage(
               context: context,
               state: state,
               child: const SupportScreen(),
@@ -93,7 +86,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/settings',
-            pageBuilder: (context, state) => _buildFadePage(
+            pageBuilder: (context, state) => _buildInstantPage(
               context: context,
               state: state,
               child: const SettingsScreen(),
@@ -101,7 +94,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/reminders',
-            pageBuilder: (context, state) => _buildFadePage(
+            pageBuilder: (context, state) => _buildInstantPage(
               context: context,
               state: state,
               child: const ReminderScreen(),
@@ -109,7 +102,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/assistant',
-            pageBuilder: (context, state) => _buildFadePage(
+            pageBuilder: (context, state) => _buildInstantPage(
               context: context,
               state: state,
               child: const AssistantScreen(),
@@ -240,28 +233,33 @@ class _AppShellState extends State<AppShell> {
       child: Scaffold(
         extendBody: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: SafeArea(
-          bottom: false,
-          child: Column(
-            children: [
-              if (!isAssistant)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
-                  child: Row(
-                    children: [
-                      const Expanded(
-                        child: FloatingTopHeader(),
-                      ),
-                      const SizedBox(width: 10),
-                      FloatingAiPill(
-                        onTap: () => context.go('/assistant'),
-                      ),
-                    ],
+        body: Stack(
+          children: [
+            widget.child,
+            if (!isAssistant)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 6),
+                    child: Row(
+                      children: [
+                        const Expanded(
+                          child: FloatingTopHeader(),
+                        ),
+                        const SizedBox(width: 10),
+                        FloatingAiPill(
+                          onTap: () => context.go('/assistant'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              Expanded(child: widget.child),
-            ],
-          ),
+              ),
+          ],
         ),
         bottomNavigationBar: isAssistant
             ? null

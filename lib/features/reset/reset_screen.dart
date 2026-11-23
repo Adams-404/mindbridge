@@ -88,11 +88,12 @@ class _ResetScreenState extends State<ResetScreen> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final reduceMotion = MediaQuery.of(context).disableAnimations;
     final isBreathing = _exercise == _Exercise.breathing;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 25, 20, 40),
+      padding: const EdgeInsets.fromLTRB(20, 84, 20, 40),
       children: [
         const PageHeading(
           eyebrow: 'A SMALL PAUSE',
@@ -175,11 +176,14 @@ class _ResetScreenState extends State<ResetScreen> with SingleTickerProviderStat
                           height: 200,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: const Color(0xFFE8EDE5),
-                            border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
+                            color: isDark ? const Color(0xFF0F1512) : const Color(0xFFE8EDE5),
+                            border: Border.all(
+                              color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink,
+                              width: MindBridgeTheme.borderWidth,
+                            ),
                             boxShadow: [
                               BoxShadow(
-                                color: MindBridgeTheme.ink,
+                                color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink,
                                 offset: Offset(3.5 + (animVal * 1.5), 3.5 + (animVal * 1.5)),
                                 blurRadius: 0,
                               ),
@@ -189,11 +193,11 @@ class _ResetScreenState extends State<ResetScreen> with SingleTickerProviderStat
                             child: Text(
                               phase,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 height: 1.25,
                                 fontWeight: FontWeight.w800,
-                                color: MindBridgeTheme.forest,
+                                color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.forest,
                               ),
                             ),
                           ),
@@ -271,14 +275,21 @@ class _ResetScreenState extends State<ResetScreen> with SingleTickerProviderStat
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: MindBridgeTheme.paper,
+            color: isDark ? Colors.black : MindBridgeTheme.paper,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
-            boxShadow: MindBridgeTheme.neoShadowSmall,
+            border: Border.all(
+              color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink,
+              width: MindBridgeTheme.borderWidth,
+            ),
+            boxShadow: isDark ? MindBridgeTheme.neoShadowSmallDark : MindBridgeTheme.neoShadowSmall,
           ),
-          child: const Text(
+          child: Text(
             'These are optional self-guided pauses, not treatment or crisis support. If focusing inward or on your breathing feels uncomfortable, stop and return to an activity that feels comfortable for you.',
-            style: TextStyle(fontSize: 12, height: 1.6, color: MindBridgeTheme.muted),
+            style: TextStyle(
+              fontSize: 12,
+              height: 1.6,
+              color: isDark ? MindBridgeTheme.darkMuted : MindBridgeTheme.muted,
+            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -301,20 +312,27 @@ class _ExerciseChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return ChoiceChip(
       label: Text(
         label,
         style: TextStyle(
           fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
-          color: selected ? MindBridgeTheme.paper : MindBridgeTheme.ink,
+          color: selected
+              ? (isDark ? Colors.black : MindBridgeTheme.paper)
+              : (isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink),
         ),
       ),
       selected: selected,
-      selectedColor: MindBridgeTheme.forest,
-      backgroundColor: MindBridgeTheme.paper,
+      selectedColor: isDark ? MindBridgeTheme.milk : MindBridgeTheme.forest,
+      backgroundColor: isDark ? Colors.black : MindBridgeTheme.paper,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
-        side: const BorderSide(color: MindBridgeTheme.ink, width: 1.6),
+        side: BorderSide(
+          color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink,
+          width: 1.6,
+        ),
       ),
       showCheckmark: false,
       onSelected: onSelected,
@@ -330,14 +348,19 @@ class _PromptCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 11),
       child: Container(
         decoration: BoxDecoration(
-          color: MindBridgeTheme.paper,
+          color: isDark ? Colors.black : MindBridgeTheme.paper,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
-          boxShadow: MindBridgeTheme.neoShadowSmall,
+          border: Border.all(
+            color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink,
+            width: MindBridgeTheme.borderWidth,
+          ),
+          boxShadow: isDark ? MindBridgeTheme.neoShadowSmallDark : MindBridgeTheme.neoShadowSmall,
         ),
         padding: const EdgeInsets.all(15),
         child: Row(
@@ -348,9 +371,12 @@ class _PromptCard extends StatelessWidget {
               height: 32,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: const Color(0xFFF0E3D9),
+                color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF0E3D9),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: MindBridgeTheme.ink, width: 1.4),
+                border: Border.all(
+                  color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink,
+                  width: 1.4,
+                ),
               ),
               child: Text(
                 number,
@@ -361,7 +387,12 @@ class _PromptCard extends StatelessWidget {
             Expanded(
               child: Text(
                 prompt,
-                style: const TextStyle(fontSize: 13, height: 1.5, fontWeight: FontWeight.w600, color: MindBridgeTheme.ink),
+                style: TextStyle(
+                  fontSize: 13,
+                  height: 1.5,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink,
+                ),
               ),
             ),
           ],

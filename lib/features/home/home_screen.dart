@@ -14,11 +14,12 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final language = ref.watch(languageProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return CustomScrollView(
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 14, 20, 110),
+          padding: const EdgeInsets.fromLTRB(20, 84, 20, 110),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               SectionLabel(AppStrings.homeSpaceToBegin(language)),
@@ -36,10 +37,13 @@ class HomeScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8EDE5),
-                  border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
+                  color: isDark ? Colors.black : const Color(0xFFE8EDE5),
+                  border: Border.all(
+                    color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink,
+                    width: MindBridgeTheme.borderWidth,
+                  ),
                   borderRadius: BorderRadius.circular(14),
-                  boxShadow: MindBridgeTheme.neoShadow,
+                  boxShadow: isDark ? MindBridgeTheme.neoShadowDark : MindBridgeTheme.neoShadow,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,10 +52,19 @@ class HomeScreen extends ConsumerWidget {
                     const SizedBox(height: 10),
                     Text(
                       AppStrings.homeHowAreThings(language),
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 24, height: 1.15),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontSize: 24,
+                            height: 1.15,
+                            color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink,
+                          ),
                     ),
                     const SizedBox(height: 6),
-                    Text(AppStrings.homeNoRightAnswer(language), style: Theme.of(context).textTheme.bodyMedium),
+                    Text(
+                      AppStrings.homeNoRightAnswer(language),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: isDark ? MindBridgeTheme.darkMuted : MindBridgeTheme.muted,
+                          ),
+                    ),
                     const SizedBox(height: 18),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -133,12 +146,24 @@ class _HomeAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? Colors.black : MindBridgeTheme.paper;
+    final borderColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
+    final titleColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
+    final subtitleColor = isDark ? MindBridgeTheme.darkMuted : MindBridgeTheme.muted;
+    final iconBg = isDark
+        ? const Color(0xFF141414)
+        : (accent ? const Color(0xFFF0E3D9) : const Color(0xFFE8EDE5));
+    final iconColor = isDark
+        ? (accent ? MindBridgeTheme.clay : MindBridgeTheme.milk)
+        : (accent ? MindBridgeTheme.clay : MindBridgeTheme.forest);
+
     return Container(
       decoration: BoxDecoration(
-        color: MindBridgeTheme.paper,
+        color: cardBg,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
-        boxShadow: MindBridgeTheme.neoShadowSmall,
+        border: Border.all(color: borderColor, width: MindBridgeTheme.borderWidth),
+        boxShadow: isDark ? MindBridgeTheme.neoShadowSmallDark : MindBridgeTheme.neoShadowSmall,
       ),
       child: Material(
         color: Colors.transparent,
@@ -157,20 +182,20 @@ class _HomeAction extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: accent ? const Color(0xFFF0E3D9) : const Color(0xFFE8EDE5),
+                    color: iconBg,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: MindBridgeTheme.ink, width: 1.4),
+                    border: Border.all(color: borderColor, width: 1.4),
                   ),
-                  child: Icon(icon, color: accent ? MindBridgeTheme.clay : MindBridgeTheme.forest, size: 22),
+                  child: Icon(icon, color: iconColor, size: 22),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: MindBridgeTheme.ink)),
+                      Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: titleColor)),
                       const SizedBox(height: 3),
-                      Text(subtitle, style: const TextStyle(fontSize: 11, color: MindBridgeTheme.muted, height: 1.3)),
+                      Text(subtitle, style: TextStyle(fontSize: 11, color: subtitleColor, height: 1.3)),
                     ],
                   ),
                 ),

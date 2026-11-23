@@ -19,10 +19,10 @@ class MindBridgeTheme {
   static const double borderRadius = 12.0;
   static const double navBorderRadius = 16.0;
 
-  static const darkSurface = Color(0xFF141414);
-  static const darkCard = Color(0xFF1E1E1E);
+  static const darkSurface = Colors.black;
+  static const darkCard = Colors.black;
   static const darkMuted = Color(0xFFA5A59E);
-  static const darkLine = Color(0xFF2E2E2E);
+  static const darkLine = Color(0xFF242424);
 
   static final neoBorder = Border.all(color: ink, width: borderWidth);
   static final subtleBorder = Border.all(color: line, width: 1.2);

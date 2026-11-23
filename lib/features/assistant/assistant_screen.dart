@@ -54,11 +54,39 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
     });
   }
 
+  void _openChatHistory(BuildContext context) {
+    HapticFeedback.lightImpact();
+    ref.read(chatSessionsProvider.notifier).loadSessions();
+    showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? Colors.black
+          : MindBridgeTheme.paper,
+      shape: RoundedRectangleBorder(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        side: BorderSide(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? MindBridgeTheme.milk
+              : MindBridgeTheme.ink,
+          width: MindBridgeTheme.borderWidth,
+        ),
+      ),
+      builder: (context) => const _ChatHistorySheet(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final chatState = ref.watch(chatProvider);
     final language = ref.watch(languageProvider);
     final isHausa = language == AppLanguage.hausa;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardBg = isDark ? Colors.black : MindBridgeTheme.paper;
+    final borderColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
+    final textColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
+    final mutedColor = isDark ? MindBridgeTheme.darkMuted : MindBridgeTheme.muted;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -88,6 +116,25 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                     ),
                   ),
                   const Spacer(),
+                  IconButton(
+                    tooltip: 'Chat history',
+                    onPressed: () => _openChatHistory(context),
+                    icon: const Icon(Icons.history_rounded),
+                  ),
+                  IconButton(
+                    tooltip: 'New conversation',
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      ref.read(chatProvider.notifier).startNewChat();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Started a new conversation'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.add_comment_outlined, color: MindBridgeTheme.clay),
+                  ),
                   if (chatState.messages.isNotEmpty)
                     IconButton(
                       tooltip: 'Clear conversation',
@@ -112,17 +159,17 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                         : 'Questions are\na good place to start.',
                     subtitle: isHausa
                         ? 'Nemi bayani kan lafiyar kwakwalwa da hanyoyin kwantar da hankali a Hausa ko Turanci.'
-                        : 'Ask general mental health questions in English or Hausa. Powered by Qwen 3.8 27B on Groq.',
+                        : 'Ask general mental health questions in English or Hausa. Evidence-informed guidance & support.',
                   ),
                   const SizedBox(height: 16),
-                  // Model & Safety Badge
+                  // Companion Status Badge
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     decoration: BoxDecoration(
-                      color: MindBridgeTheme.paper,
+                      color: cardBg,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
-                      boxShadow: MindBridgeTheme.neoShadowSmall,
+                      border: Border.all(color: borderColor, width: MindBridgeTheme.borderWidth),
+                      boxShadow: isDark ? MindBridgeTheme.neoShadowSmallDark : MindBridgeTheme.neoShadowSmall,
                     ),
                     child: Row(
                       children: [
@@ -135,10 +182,10 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'Active Model: Qwen 3.8 27B (Groq) · High-speed inference',
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: MindBridgeTheme.ink),
+                            'MindBridge AI Companion · Evidence-informed guidance & support',
+                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: textColor),
                           ),
                         ),
                       ],
@@ -150,10 +197,10 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                     Container(
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE8EDE5),
-                        border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
+                        color: isDark ? const Color(0xFF0F1512) : const Color(0xFFE8EDE5),
+                        border: Border.all(color: borderColor, width: MindBridgeTheme.borderWidth),
                         borderRadius: BorderRadius.circular(14),
-                        boxShadow: MindBridgeTheme.neoShadow,
+                        boxShadow: isDark ? MindBridgeTheme.neoShadowDark : MindBridgeTheme.neoShadow,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,25 +211,25 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                                 width: 38,
                                 height: 38,
                                 decoration: BoxDecoration(
-                                  color: MindBridgeTheme.paper,
+                                  color: isDark ? const Color(0xFF1E2822) : MindBridgeTheme.paper,
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: MindBridgeTheme.ink, width: 1.4),
+                                  border: Border.all(color: borderColor, width: 1.4),
                                 ),
-                                child: const Icon(Icons.auto_awesome_rounded, color: MindBridgeTheme.forest, size: 20),
+                                child: Icon(Icons.auto_awesome_rounded, color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.forest, size: 20),
                               ),
                               const SizedBox(width: 12),
-                              const Expanded(
+                              Expanded(
                                 child: Text(
                                   'Grounded Psychoeducation',
-                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: MindBridgeTheme.ink),
+                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: textColor),
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 12),
-                          const Text(
+                          Text(
                             'MindBridge AI provides general educational explanations and grounding exercises. It does not diagnose, prescribe, or substitute professional therapy.',
-                            style: TextStyle(fontSize: 12, height: 1.5, color: MindBridgeTheme.ink),
+                            style: TextStyle(fontSize: 12, height: 1.5, color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink),
                           ),
                         ],
                       ),
@@ -196,10 +243,10 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                       children: _samplePrompts.map((prompt) => ActionChip(
                         label: Text(
                           prompt,
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: MindBridgeTheme.ink),
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: textColor),
                         ),
-                        backgroundColor: MindBridgeTheme.paper,
-                        side: const BorderSide(color: MindBridgeTheme.ink, width: 1.4),
+                        backgroundColor: cardBg,
+                        side: BorderSide(color: borderColor, width: 1.4),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         onPressed: () => _sendMessage(prompt),
                       )).toList(),
@@ -221,7 +268,7 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                       Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF0E3D9),
+                          color: isDark ? const Color(0xFF2B1818) : const Color(0xFFF0E3D9),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: MindBridgeTheme.clay, width: 1.6),
                         ),
@@ -232,7 +279,7 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                             Expanded(
                               child: Text(
                                 chatState.errorMessage!,
-                                style: const TextStyle(fontSize: 11, color: MindBridgeTheme.ink),
+                                style: TextStyle(fontSize: 11, color: textColor),
                               ),
                             ),
                           ],
@@ -245,10 +292,10 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
             // Bottom input bar
             Container(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
-              decoration: const BoxDecoration(
-                color: MindBridgeTheme.paper,
+              decoration: BoxDecoration(
+                color: cardBg,
                 border: Border(
-                  top: BorderSide(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
+                  top: BorderSide(color: borderColor, width: MindBridgeTheme.borderWidth),
                 ),
               ),
               child: Row(
@@ -259,33 +306,36 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                       textCapitalization: TextCapitalization.sentences,
                       minLines: 1,
                       maxLines: 4,
+                      style: TextStyle(color: textColor),
                       onSubmitted: (_) => _sendMessage(),
                       decoration: InputDecoration(
                         hintText: isHausa
                             ? 'Yi tambaya a Hausa ko Turanci...'
                             : 'Ask a question in English or Hausa...',
-                        hintStyle: const TextStyle(fontSize: 13, color: MindBridgeTheme.muted),
+                        hintStyle: TextStyle(fontSize: 13, color: mutedColor),
                         filled: true,
-                        fillColor: MindBridgeTheme.milk,
+                        fillColor: isDark ? const Color(0xFF141414) : MindBridgeTheme.milk,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: MindBridgeTheme.ink, width: 1.6),
+                          borderSide: BorderSide(color: borderColor, width: 1.6),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: MindBridgeTheme.forest, width: 2.2),
+                          borderSide: BorderSide(color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.forest, width: 2.2),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(color: MindBridgeTheme.ink, width: 1.6),
+                          borderSide: BorderSide(color: borderColor, width: 1.6),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Material(
-                    color: chatState.isLoading ? MindBridgeTheme.muted : MindBridgeTheme.forest,
+                    color: chatState.isLoading
+                        ? mutedColor
+                        : (isDark ? MindBridgeTheme.milk : MindBridgeTheme.forest),
                     borderRadius: BorderRadius.circular(12),
                     child: InkWell(
                       onTap: chatState.isLoading ? null : () => _sendMessage(),
@@ -294,10 +344,14 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                         padding: const EdgeInsets.all(13),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
-                          boxShadow: MindBridgeTheme.neoShadowSmall,
+                          border: Border.all(color: borderColor, width: MindBridgeTheme.borderWidth),
+                          boxShadow: isDark ? MindBridgeTheme.neoShadowSmallDark : MindBridgeTheme.neoShadowSmall,
                         ),
-                        child: const Icon(Icons.send_rounded, color: MindBridgeTheme.paper, size: 20),
+                        child: Icon(
+                          Icons.send_rounded,
+                          color: isDark ? Colors.black : MindBridgeTheme.paper,
+                          size: 20,
+                        ),
                       ),
                     ),
                   ),
@@ -318,7 +372,9 @@ class _MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isUser = message.role == 'user';
+    final borderColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
 
     if (isUser) {
       return Align(
@@ -327,10 +383,10 @@ class _MessageBubble extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 290),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: MindBridgeTheme.forest,
+            color: isDark ? const Color(0xFF1A2A20) : MindBridgeTheme.forest,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
-            boxShadow: MindBridgeTheme.neoShadowSmall,
+            border: Border.all(color: borderColor, width: MindBridgeTheme.borderWidth),
+            boxShadow: isDark ? MindBridgeTheme.neoShadowSmallDark : MindBridgeTheme.neoShadowSmall,
           ),
           child: Text(
             message.content,
@@ -346,10 +402,10 @@ class _MessageBubble extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 320),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: MindBridgeTheme.paper,
+          color: isDark ? Colors.black : MindBridgeTheme.paper,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
-          boxShadow: MindBridgeTheme.neoShadowSmall,
+          border: Border.all(color: borderColor, width: MindBridgeTheme.borderWidth),
+          boxShadow: isDark ? MindBridgeTheme.neoShadowSmallDark : MindBridgeTheme.neoShadowSmall,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,23 +418,39 @@ class _MessageBubble extends StatelessWidget {
                   height: 22,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE8EDE5),
+                    color: isDark ? const Color(0xFF1A2A20) : const Color(0xFFE8EDE5),
                     shape: BoxShape.circle,
-                    border: Border.all(color: MindBridgeTheme.ink, width: 1.2),
+                    border: Border.all(color: borderColor, width: 1.2),
                   ),
-                  child: const Text('MB', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: MindBridgeTheme.forest)),
+                  child: Text(
+                    'MB',
+                    style: TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.forest,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   'MindBridge AI',
-                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: MindBridgeTheme.forest),
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.forest,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 10),
             Text(
               message.content,
-              style: const TextStyle(fontSize: 13, height: 1.55, fontWeight: FontWeight.w500, color: MindBridgeTheme.ink),
+              style: TextStyle(
+                fontSize: 13,
+                height: 1.55,
+                fontWeight: FontWeight.w500,
+                color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink,
+              ),
             ),
           ],
         ),
@@ -392,32 +464,188 @@ class _LoadingAssistantBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
+
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: MindBridgeTheme.paper,
+          color: isDark ? Colors.black : MindBridgeTheme.paper,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: MindBridgeTheme.ink, width: MindBridgeTheme.borderWidth),
-          boxShadow: MindBridgeTheme.neoShadowSmall,
+          border: Border.all(color: borderColor, width: MindBridgeTheme.borderWidth),
+          boxShadow: isDark ? MindBridgeTheme.neoShadowSmallDark : MindBridgeTheme.neoShadowSmall,
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
               width: 14,
               height: 14,
-              child: CircularProgressIndicator(strokeWidth: 2, color: MindBridgeTheme.forest),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.forest,
+              ),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Text(
               'MindBridge AI is reflecting...',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: MindBridgeTheme.muted),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: isDark ? MindBridgeTheme.darkMuted : MindBridgeTheme.muted,
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ChatHistorySheet extends ConsumerWidget {
+  const _ChatHistorySheet();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final sessions = ref.watch(chatSessionsProvider);
+    final activeSessionId = ref.watch(chatProvider).sessionId;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
+    final textColor = isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink;
+    final cardBg = isDark ? const Color(0xFF141414) : MindBridgeTheme.paper;
+
+    return DraggableScrollableSheet(
+      initialChildSize: 0.7,
+      minChildSize: 0.4,
+      maxChildSize: 0.9,
+      expand: false,
+      builder: (context, scrollController) {
+        return Container(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark ? MindBridgeTheme.milk : MindBridgeTheme.ink,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Text(
+                    'Chat History',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      color: textColor,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: Icon(Icons.close_rounded, color: textColor),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              FilledButton.icon(
+                onPressed: () {
+                  HapticFeedback.mediumImpact();
+                  ref.read(chatProvider.notifier).startNewChat();
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('Start New Conversation'),
+              ),
+              const SizedBox(height: 18),
+              if (sessions.isEmpty)
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      'No past conversations saved yet.',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isDark ? MindBridgeTheme.darkMuted : MindBridgeTheme.muted,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                Expanded(
+                  child: ListView.separated(
+                    controller: scrollController,
+                    itemCount: sessions.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      final session = sessions[index];
+                      final isActive = session.id == activeSessionId;
+
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: isActive
+                              ? (isDark ? const Color(0xFF1E2822) : const Color(0xFFE8EDE5))
+                              : cardBg,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isActive ? MindBridgeTheme.forest : borderColor,
+                            width: isActive ? 2.0 : 1.4,
+                          ),
+                          boxShadow: isDark ? MindBridgeTheme.neoShadowSmallDark : MindBridgeTheme.neoShadowSmall,
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                            title: Text(
+                              session.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w800,
+                                color: textColor,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${session.messages.length} messages · ${MaterialLocalizations.of(context).formatShortDate(session.createdAt)}',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: isDark ? MindBridgeTheme.darkMuted : MindBridgeTheme.muted,
+                              ),
+                            ),
+                            trailing: IconButton(
+                              tooltip: 'Delete session',
+                              icon: const Icon(Icons.delete_outline_rounded, color: MindBridgeTheme.clay),
+                              onPressed: () async {
+                                HapticFeedback.lightImpact();
+                                await ref.read(chatSessionsProvider.notifier).deleteSession(session.id);
+                                await ref.read(chatProvider.notifier).deleteSession(session.id);
+                              },
+                            ),
+                            onTap: () {
+                              HapticFeedback.lightImpact();
+                              ref.read(chatProvider.notifier).loadSession(session);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
