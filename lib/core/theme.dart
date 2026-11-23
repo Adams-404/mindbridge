@@ -17,6 +17,12 @@ class MindBridgeTheme {
   // Neo-Brutalist design tokens
   static const double borderWidth = 1.8;
   static const double borderRadius = 12.0;
+  static const double navBorderRadius = 16.0;
+
+  static const darkSurface = Color(0xFF141414);
+  static const darkCard = Color(0xFF1E1E1E);
+  static const darkMuted = Color(0xFFA5A59E);
+  static const darkLine = Color(0xFF2E2E2E);
 
   static final neoBorder = Border.all(color: ink, width: borderWidth);
   static final subtleBorder = Border.all(color: line, width: 1.2);
@@ -31,6 +37,14 @@ class MindBridgeTheme {
 
   static const neoShadowLarge = [
     BoxShadow(color: ink, offset: Offset(5, 5), blurRadius: 0),
+  ];
+
+  static const neoShadowDark = [
+    BoxShadow(color: milk, offset: Offset(3.5, 3.5), blurRadius: 0),
+  ];
+
+  static const neoShadowSmallDark = [
+    BoxShadow(color: milk, offset: Offset(2, 2), blurRadius: 0),
   ];
 
   static ThemeData get light {
@@ -119,6 +133,99 @@ class MindBridgeTheme {
           fontSize: 13,
           height: 1.6,
           color: muted,
+        ),
+      ),
+    );
+  }
+
+  static ThemeData get dark {
+    const scheme = ColorScheme.dark(
+      brightness: Brightness.dark,
+      surface: darkSurface,
+      primary: milk,
+      onPrimary: Colors.black,
+      secondary: clay,
+      onSecondary: milk,
+      onSurface: milk,
+      outline: milk,
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: scheme,
+      scaffoldBackgroundColor: Colors.black,
+      fontFamily: 'sans-serif',
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.black,
+        foregroundColor: milk,
+        elevation: 0,
+        centerTitle: false,
+        titleTextStyle: TextStyle(color: milk, fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: -0.8),
+      ),
+      cardTheme: CardThemeData(
+        color: darkCard,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadius),
+          side: const BorderSide(color: milk, width: borderWidth),
+        ),
+        margin: EdgeInsets.zero,
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: milk,
+          foregroundColor: Colors.black,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius - 2),
+            side: const BorderSide(color: milk, width: borderWidth),
+          ),
+          textStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: 0.2),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: milk,
+          backgroundColor: darkSurface,
+          elevation: 0,
+          side: const BorderSide(color: milk, width: borderWidth),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius - 2),
+          ),
+          textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+        ),
+      ),
+      textTheme: const TextTheme(
+        headlineMedium: TextStyle(
+          fontSize: 32,
+          height: 1.1,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -1.2,
+          color: milk,
+        ),
+        titleLarge: TextStyle(
+          fontSize: 21,
+          fontWeight: FontWeight.w800,
+          letterSpacing: -0.6,
+          color: milk,
+        ),
+        titleMedium: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.3,
+          color: milk,
+        ),
+        bodyLarge: TextStyle(
+          fontSize: 15,
+          height: 1.6,
+          color: milk,
+        ),
+        bodyMedium: TextStyle(
+          fontSize: 13,
+          height: 1.6,
+          color: darkMuted,
         ),
       ),
     );

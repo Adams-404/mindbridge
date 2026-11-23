@@ -18,25 +18,9 @@ class HomeScreen extends ConsumerWidget {
     return CustomScrollView(
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 36),
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 110),
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              Row(
-                children: [
-                  const Text('mindbridge', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: -1)),
-                  const Text('.', style: TextStyle(fontSize: 24, color: MindBridgeTheme.clay, fontWeight: FontWeight.w900)),
-                  const Spacer(),
-                  IconButton(
-                    tooltip: 'Settings',
-                    onPressed: () {
-                      HapticFeedback.lightImpact();
-                      context.go('/settings');
-                    },
-                    icon: const Icon(Icons.tune_rounded, color: MindBridgeTheme.ink),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
               SectionLabel(AppStrings.homeSpaceToBegin(language)),
               const SizedBox(height: 12),
               Text(

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/ai_repository.dart';
@@ -10,6 +11,39 @@ export '../data/settings_repository.dart' show SettingsRepository, settingsRepos
 export '../data/support_repository.dart' show SupportRepository, supportRepositoryProvider;
 
 enum AppLanguage { english, hausa }
+
+class ThemeModeNotifier extends StateNotifier<ThemeMode> {
+  ThemeModeNotifier(this._repository, [super.initial = ThemeMode.system]) {
+    _loadPreference();
+  }
+
+  final SettingsRepository _repository;
+  bool _initialized = false;
+
+  Future<void> _loadPreference() async {
+    final saved = await _repository.getThemeMode();
+    if (!_initialized) {
+      super.state = saved;
+      _initialized = true;
+    }
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    _initialized = true;
+    super.state = mode;
+    await _repository.setThemeMode(mode);
+  }
+
+  @override
+  set state(ThemeMode value) {
+    setThemeMode(value);
+  }
+}
+
+final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
+  final repository = ref.watch(settingsRepositoryProvider);
+  return ThemeModeNotifier(repository);
+});
 
 class LanguageNotifier extends StateNotifier<AppLanguage> {
   LanguageNotifier(this._repository, [super.initial = AppLanguage.english]) {

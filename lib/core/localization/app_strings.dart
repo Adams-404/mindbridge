@@ -25,6 +25,9 @@ class AppStrings {
   static String navSupport(AppLanguage lang) =>
       lang == AppLanguage.hausa ? 'Tallafi' : 'Support';
 
+  static String navSettings(AppLanguage lang) =>
+      lang == AppLanguage.hausa ? 'Saituna' : 'Settings';
+
   // Home Screen
   static String homeSpaceToBegin(AppLanguage lang) =>
       lang == AppLanguage.hausa ? 'WURIN FARAWA' : 'A SPACE TO BEGIN';

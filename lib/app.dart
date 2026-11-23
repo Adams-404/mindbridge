@@ -18,7 +18,7 @@ import 'features/reminders/reminder_screen.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/support/support_screen.dart';
 
-Page<dynamic> _buildFadeSlidePage({
+Page<dynamic> _buildFadePage({
   required BuildContext context,
   required GoRouterState state,
   required Widget child,
@@ -26,18 +26,11 @@ Page<dynamic> _buildFadeSlidePage({
   return CustomTransitionPage<void>(
     key: state.pageKey,
     child: child,
-    transitionDuration: const Duration(milliseconds: 250),
+    transitionDuration: const Duration(milliseconds: 180),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
       return FadeTransition(
-        opacity: curved,
-        child: SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0, 0.025),
-            end: Offset.zero,
-          ).animate(curved),
-          child: child,
-        ),
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+        child: child,
       );
     },
   );
@@ -60,7 +53,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/',
-            pageBuilder: (context, state) => _buildFadeSlidePage(
+            pageBuilder: (context, state) => _buildFadePage(
               context: context,
               state: state,
               child: const HomeScreen(),
@@ -68,7 +61,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/learn',
-            pageBuilder: (context, state) => _buildFadeSlidePage(
+            pageBuilder: (context, state) => _buildFadePage(
               context: context,
               state: state,
               child: const LearnScreen(),
@@ -76,7 +69,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/check-in',
-            pageBuilder: (context, state) => _buildFadeSlidePage(
+            pageBuilder: (context, state) => _buildFadePage(
               context: context,
               state: state,
               child: const CheckInScreen(),
@@ -84,7 +77,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/reset',
-            pageBuilder: (context, state) => _buildFadeSlidePage(
+            pageBuilder: (context, state) => _buildFadePage(
               context: context,
               state: state,
               child: const ResetScreen(),
@@ -92,7 +85,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/support',
-            pageBuilder: (context, state) => _buildFadeSlidePage(
+            pageBuilder: (context, state) => _buildFadePage(
               context: context,
               state: state,
               child: const SupportScreen(),
@@ -100,7 +93,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/settings',
-            pageBuilder: (context, state) => _buildFadeSlidePage(
+            pageBuilder: (context, state) => _buildFadePage(
               context: context,
               state: state,
               child: const SettingsScreen(),
@@ -108,7 +101,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/reminders',
-            pageBuilder: (context, state) => _buildFadeSlidePage(
+            pageBuilder: (context, state) => _buildFadePage(
               context: context,
               state: state,
               child: const ReminderScreen(),
@@ -116,7 +109,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/assistant',
-            pageBuilder: (context, state) => _buildFadeSlidePage(
+            pageBuilder: (context, state) => _buildFadePage(
               context: context,
               state: state,
               child: const AssistantScreen(),
@@ -166,6 +159,7 @@ class MindBridgeApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final language = ref.watch(languageProvider);
+    final themeMode = ref.watch(themeModeProvider);
     final locale = language == AppLanguage.hausa
         ? const Locale('ha')
         : const Locale('en');
@@ -174,6 +168,8 @@ class MindBridgeApp extends ConsumerWidget {
       title: 'MindBridge',
       debugShowCheckedModeBanner: false,
       theme: MindBridgeTheme.light,
+      darkTheme: MindBridgeTheme.dark,
+      themeMode: themeMode,
       locale: locale,
       supportedLocales: const [
         Locale('en', ''),
@@ -191,41 +187,99 @@ class MindBridgeApp extends ConsumerWidget {
   }
 }
 
-class AppShell extends StatelessWidget {
+class AppShell extends StatefulWidget {
   const AppShell({required this.location, required this.child, super.key});
 
   final String location;
   final Widget child;
 
+  @override
+  State<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends State<AppShell> {
+  DateTime? _lastBackPress;
+
   int get _index {
-    if (location.startsWith('/learn')) return 1;
-    if (location.startsWith('/check-in')) return 2;
-    if (location.startsWith('/support')) return 3;
+    if (widget.location.startsWith('/learn')) return 1;
+    if (widget.location.startsWith('/check-in')) return 2;
+    if (widget.location.startsWith('/support')) return 3;
+    if (widget.location.startsWith('/settings')) return 4;
     return 0;
+  }
+
+  void _handlePop() {
+    if (widget.location != '/') {
+      context.go('/');
+      return;
+    }
+    final now = DateTime.now();
+    if (_lastBackPress == null || now.difference(_lastBackPress!) > const Duration(seconds: 2)) {
+      _lastBackPress = now;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Swipe back again to exit MindBridge'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+    SystemNavigator.pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: MindBridgeTheme.milk,
-      body: SafeArea(
-        bottom: false,
-        child: child,
-      ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-          child: FloatingBottomBar(
-            selectedIndex: _index,
-            onDestinationSelected: (index) {
-              const paths = ['/', '/learn', '/check-in', '/support'];
-              if (index >= 0 && index < paths.length) {
-                context.go(paths[index]);
-              }
-            },
+    final isAssistant = widget.location.startsWith('/assistant');
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _handlePop();
+      },
+      child: Scaffold(
+        extendBody: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              if (!isAssistant)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: FloatingTopHeader(),
+                      ),
+                      const SizedBox(width: 10),
+                      FloatingAiPill(
+                        onTap: () => context.go('/assistant'),
+                      ),
+                    ],
+                  ),
+                ),
+              Expanded(child: widget.child),
+            ],
           ),
         ),
+        bottomNavigationBar: isAssistant
+            ? null
+            : SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+                  child: FloatingBottomBar(
+                    selectedIndex: _index,
+                    onDestinationSelected: (index) {
+                      const paths = ['/', '/learn', '/check-in', '/support', '/settings'];
+                      if (index >= 0 && index < paths.length) {
+                        context.go(paths[index]);
+                      }
+                    },
+                  ),
+                ),
+              ),
       ),
     );
   }

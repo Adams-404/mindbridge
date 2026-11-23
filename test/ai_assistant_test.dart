@@ -37,6 +37,7 @@ class FakeAiRepository implements AiRepository {
 
 class FakeSettingsRepository implements SettingsRepository {
   AppLanguage _lang = AppLanguage.english;
+  ThemeMode _themeMode = ThemeMode.system;
   bool _seenOnboarding = true;
 
   @override
@@ -45,6 +46,14 @@ class FakeSettingsRepository implements SettingsRepository {
   @override
   Future<void> setLanguage(AppLanguage language) async {
     _lang = language;
+  }
+
+  @override
+  Future<ThemeMode> getThemeMode() async => _themeMode;
+
+  @override
+  Future<void> setThemeMode(ThemeMode mode) async {
+    _themeMode = mode;
   }
 
   @override

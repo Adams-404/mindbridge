@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/localization/app_strings.dart';
 import '../../core/providers.dart';
@@ -60,39 +61,58 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
     final isHausa = language == AppLanguage.hausa;
 
     return Scaffold(
-      backgroundColor: MindBridgeTheme.milk,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+              child: Row(
+                children: [
+                  FloatingBackButton(
+                    onTap: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go('/');
+                      }
+                    },
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'MindBridge AI',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.6,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (chatState.messages.isNotEmpty)
+                    IconButton(
+                      tooltip: 'Clear conversation',
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        ref.read(chatProvider.notifier).clearConversation();
+                      },
+                      icon: const Icon(Icons.refresh_rounded, color: MindBridgeTheme.clay),
+                    ),
+                ],
+              ),
+            ),
             Expanded(
               child: ListView(
                 controller: _scrollController,
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: PageHeading(
-                          eyebrow: 'MINDBRIDGE INFORMATION ASSISTANT',
-                          title: isHausa
-                              ? 'Tambayoyi hanya\nce mai kyau ta farawa.'
-                              : 'Questions are\na good place to start.',
-                          subtitle: isHausa
-                              ? 'Nemi bayani kan lafiyar kwakwalwa da hanyoyin kwantar da hankali a Hausa ko Turanci.'
-                              : 'Ask general mental health questions in English or Hausa. Powered by Qwen 3.8 27B on Groq.',
-                        ),
-                      ),
-                      if (chatState.messages.isNotEmpty)
-                        IconButton(
-                          tooltip: 'Clear conversation',
-                          onPressed: () {
-                            HapticFeedback.lightImpact();
-                            ref.read(chatProvider.notifier).clearConversation();
-                          },
-                          icon: const Icon(Icons.refresh_rounded, color: MindBridgeTheme.clay),
-                        ),
-                    ],
+                  PageHeading(
+                    eyebrow: 'MINDBRIDGE INFORMATION ASSISTANT',
+                    title: isHausa
+                        ? 'Tambayoyi hanya\nce mai kyau ta farawa.'
+                        : 'Questions are\na good place to start.',
+                    subtitle: isHausa
+                        ? 'Nemi bayani kan lafiyar kwakwalwa da hanyoyin kwantar da hankali a Hausa ko Turanci.'
+                        : 'Ask general mental health questions in English or Hausa. Powered by Qwen 3.8 27B on Groq.',
                   ),
                   const SizedBox(height: 16),
                   // Model & Safety Badge
