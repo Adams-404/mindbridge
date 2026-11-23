@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -95,7 +97,7 @@ class GroqAiRepository implements AiRepository {
         throw Exception('Groq API error (${response.statusCode}): $errorBody');
       }
     } catch (e) {
-      if (e is http.ClientException) {
+      if (e is http.ClientException || e is SocketException || e is TimeoutException) {
         throw Exception('Unable to reach MindBridge AI assistant. Please check your network connection.');
       }
       rethrow;
